@@ -162,7 +162,7 @@ Session::setTemp($key, $value, $expire);
 
 You can load a specific session handler by specifying the `className` option of the `$options` variable of the `register` method.
 
-Custom session handlers can be created by extending `\Fyre\Session\SessionHandler` and implementing the `SessionHandlerInterface`.
+Custom session handlers can be created by extending `\Fyre\Session\SessionHandler` and implementing the [`SessionHandlerInterface`](https://www.php.net/manual/en/class.sessionhandlerinterface.php).
 
 
 ### Database
@@ -170,7 +170,7 @@ Custom session handlers can be created by extending `\Fyre\Session\SessionHandle
 The Database session handler can be loaded using custom configuration.
 
 - `$options` is an array containing configuration options.
-    - `className` must be set to `\Fyre\Session\Handlers\FileSessionHandler`.
+    - `className` must be set to `\Fyre\Session\Handlers\DatabaseSessionHandler`.
     - `cookieName` is a string representing the cookie name, and will default to "*FyreSession*".
     - `cookieLifetime` is a number representing the cookie lifetime, and will default to *0*.
     - `cookieDomain` is a string representing the cookie domain, and will default to "".
