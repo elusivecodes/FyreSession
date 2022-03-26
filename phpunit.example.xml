@@ -1,0 +1,15 @@
+<phpunit>
+    <php>
+        <env name="DB_HOST" value="127.0.0.1" force="true" />
+        <env name="DB_USERNAME" value="root" force="true" />
+        <env name="DB_PASSWORD" value="" force="true" />
+        <env name="DB_NAME" value="test" force="true" />
+        <env name="DB_PORT" value="3306" force="true" />
+        <env name="REDIS_HOST" value="127.0.0.1" force="true" />
+        <env name="REDIS_PASSWORD" value="" force="true" />
+        <env name="REDIS_DATABASE" value="" force="true" />
+        <env name="REDIS_PORT" value="6379" force="true" />
+        <env name="MEMCACHED_HOST" value="127.0.0.1" force="true" />
+        <env name="MEMCACHED_PORT" value="11211" force="true" />
+    </php>
+</phpunit>

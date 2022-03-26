@@ -1,0 +1,31 @@
+{
+    "name": "fyre/session",
+    "description": "A session library.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "elusivecodes",
+            "email": "elusivecodes@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Fyre\\Session\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "fyre/db": "^1.2",
+        "fyre/filesystem": "^1.0",
+        "fyre/path": "^1.0",
+        "fyre/schema": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9"
+    }
+}
