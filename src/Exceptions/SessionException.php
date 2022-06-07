@@ -27,14 +27,14 @@ class SessionException extends RunTimeException
         return new static('Session handler connection failed');
     }
 
-    public static function forInvalidDatabase(string $database)
-    {
-        return new static('Session handler invalid database: '.$database);
-    }
-
     public static function forInvalidClass(string $className = '')
     {
         return new static('Cache handler class not found: '.$className);
+    }
+
+    public static function forInvalidDatabase(string $database)
+    {
+        return new static('Session handler invalid database: '.$database);
     }
 
     public static function forSessionStarted()
