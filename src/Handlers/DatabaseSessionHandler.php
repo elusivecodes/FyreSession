@@ -8,7 +8,7 @@ use
     Fyre\DB\ConnectionManager,
     Fyre\DB\Connection,
     Fyre\Schema\SchemaRegistry,
-    Fyre\Schema\TableSchema,
+    Fyre\Schema\TableSchemaInterface,
     Fyre\Session\SessionHandler,
     SessionHandlerInterface;
 
@@ -24,7 +24,7 @@ class DatabaseSessionHandler extends SessionHandler implements SessionHandlerInt
 
     protected Connection $db;
 
-    protected TableSchema $schema;
+    protected TableSchemaInterface $schema;
 
     protected string $table;
 
