@@ -81,6 +81,7 @@ class RedisSessionHandler extends SessionHandler implements SessionHandlerInterf
      * @param string $path The session path.
      * @param string $name The session name.
      * @return bool TRUE if the session was opened, otherwise FALSE.
+     * @throws SessionException if the connection is not valid.
      */
     public function open(string $path, string $name): bool
     {

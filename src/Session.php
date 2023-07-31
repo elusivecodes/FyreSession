@@ -178,6 +178,7 @@ abstract class Session
     /**
      * Register the session handler.
      * @param array $options The options for the session handler.
+     * @throws SessionException if the session is already started, or the handler is not valid.
      */
     public static function register(array $options): void
     {
