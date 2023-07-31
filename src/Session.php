@@ -3,26 +3,23 @@ declare(strict_types=1);
 
 namespace Fyre\Session;
 
-use
-    Closure,
-    Fyre\Session\Exceptions\SessionException;
+use Closure;
+use Fyre\Session\Exceptions\SessionException;
 
-use const
-    PHP_SAPI,
-    PHP_SESSION_ACTIVE;
+use const PHP_SAPI;
+use const PHP_SESSION_ACTIVE;
 
-use function
-    array_key_exists,
-    ini_set,
-    register_shutdown_function,
-    session_destroy,
-    session_id,
-    session_regenerate_id,
-    session_set_save_handler,
-    session_start,
-    session_status,
-    session_write_close,
-    time;
+use function array_key_exists;
+use function ini_set;
+use function register_shutdown_function;
+use function session_destroy;
+use function session_id;
+use function session_regenerate_id;
+use function session_set_save_handler;
+use function session_start;
+use function session_status;
+use function session_write_close;
+use function time;
 
 /**
  * Session
@@ -254,6 +251,9 @@ abstract class Session
      */
     public static function set(string $key, mixed $value): void
     {
+        unset($_SESSION['_flash'][$key]);
+        unset($_SESSION['_temp'][$key]);
+
         $_SESSION[$key] = $value;
     }
 
@@ -264,9 +264,9 @@ abstract class Session
      */
     public static function setFlash(string $key, mixed $value): void
     {
-        $_SESSION['_flash'][$key] = true;
-
         static::set($key, $value);
+
+        $_SESSION['_flash'][$key] = true;
     }
 
     /**
@@ -277,9 +277,9 @@ abstract class Session
      */
     public static function setTemp(string $key, mixed $value, int $expire = 300): void
     {
-        $_SESSION['_temp'][$key] = time() + $expire;
-
         static::set($key, $value);
+
+        $_SESSION['_temp'][$key] = time() + $expire;
     }
 
 }

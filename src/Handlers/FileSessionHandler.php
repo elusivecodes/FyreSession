@@ -3,19 +3,15 @@ declare(strict_types=1);
 
 namespace Fyre\Session\Handlers;
 
-use
-    Exception,
-    Fyre\FileSystem\File,
-    Fyre\FileSystem\Folder,
-    Fyre\Session\SessionHandler,
-    Fyre\Utility\Path,
-    SessionHandlerInterface;
+use Fyre\FileSystem\File;
+use Fyre\FileSystem\Folder;
+use Fyre\Session\SessionHandler;
+use Fyre\Utility\Path;
+use SessionHandlerInterface;
 
-use const
-    LOCK_EX;
+use const LOCK_EX;
 
-use function
-    time;
+use function time;
 
 /**
  * FileSessionHandler

@@ -3,12 +3,10 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use
-    Fyre\FileSystem\Folder,
-    Fyre\Session\Handlers\FileSessionHandler,
-    Fyre\Session\Session,
-    Fyre\Session\SessionHandler,
-    PHPUnit\Framework\TestCase;
+use Fyre\FileSystem\Folder;
+use Fyre\Session\Handlers\FileSessionHandler;
+use Fyre\Session\Session;
+use PHPUnit\Framework\TestCase;
 
 final class FileTest extends TestCase
 {

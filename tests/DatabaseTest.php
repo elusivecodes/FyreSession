@@ -3,16 +3,13 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use
-    Fyre\DB\ConnectionManager,
-    Fyre\DB\Handlers\MySQL\MySQLConnection,
-    Fyre\Session\Handlers\DatabaseSessionHandler,
-    Fyre\Session\Session,
-    Fyre\Session\SessionHandler,
-    PHPUnit\Framework\TestCase;
+use Fyre\DB\ConnectionManager;
+use Fyre\DB\Handlers\MySQL\MySQLConnection;
+use Fyre\Session\Handlers\DatabaseSessionHandler;
+use Fyre\Session\Session;
+use PHPUnit\Framework\TestCase;
 
-use function
-    getenv;
+use function getenv;
 
 final class DatabaseTest extends TestCase
 {

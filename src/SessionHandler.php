@@ -3,20 +3,15 @@ declare(strict_types=1);
 
 namespace Fyre\Session;
 
-use
-    Fyre\Session\Session;
-
-use function
-    array_key_exists,
-    array_replace_recursive,
-    headers_sent,
-    ini_get,
-    session_name,
-    session_get_cookie_params,
-    session_regenerate_id,
-    setcookie,
-    strtolower,
-    time;
+use function array_key_exists;
+use function array_replace_recursive;
+use function headers_sent;
+use function ini_get;
+use function session_name;
+use function session_get_cookie_params;
+use function setcookie;
+use function strtolower;
+use function time;
 
 /**
  * SessionHandler
@@ -169,7 +164,7 @@ abstract class SessionHandler
      */
     protected function getLock(string $sessionId): bool
     {
-        $this->sessionid = $sessionId;
+        $this->sessionId = $sessionId;
 
         return true;
     }

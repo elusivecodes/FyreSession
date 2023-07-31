@@ -3,14 +3,13 @@ declare(strict_types=1);
 
 namespace Fyre\Session\Handlers;
 
-use
-    Fyre\DateTime\DateTimeImmutable,
-    Fyre\DB\ConnectionManager,
-    Fyre\DB\Connection,
-    Fyre\Schema\SchemaRegistry,
-    Fyre\Schema\TableSchemaInterface,
-    Fyre\Session\SessionHandler,
-    SessionHandlerInterface;
+use Fyre\DateTime\DateTime;
+use Fyre\DB\ConnectionManager;
+use Fyre\DB\Connection;
+use Fyre\Schema\SchemaRegistry;
+use Fyre\Schema\TableSchema;
+use Fyre\Session\SessionHandler;
+use SessionHandlerInterface;
 
 /**
  * DatabaseSessionHandler
@@ -24,7 +23,7 @@ class DatabaseSessionHandler extends SessionHandler implements SessionHandlerInt
 
     protected Connection $db;
 
-    protected TableSchemaInterface $schema;
+    protected TableSchema $schema;
 
     protected string $table;
 
@@ -71,19 +70,17 @@ class DatabaseSessionHandler extends SessionHandler implements SessionHandlerInt
      */
     public function gc(int $expires): int|false
     {
-        $maxLife = DateTimeImmutable::now()->sub($expires, 'seconds');
+        $maxLife = DateTime::now()->sub($expires, 'seconds');
 
         $this->db->builder()
             ->table($this->table)
             ->where([
                 'or' => [
                     [
-                        'created <' => $this->schema->getType('created')
-                            ->toDatabase($maxLife),
+                        'created <' => $this->schema->getType('created')->toDatabase($maxLife),
                         'modified IS NULL'
                     ],
-                    'modified <' => $this->schema->getType('modified')
-                        ->toDatabase($maxLife)
+                    'modified <' => $this->schema->getType('modified')->toDatabase($maxLife)
                 ]
             ])
             ->delete()
@@ -151,7 +148,7 @@ class DatabaseSessionHandler extends SessionHandler implements SessionHandlerInt
             return false;
         }
 
-        $now = DateTimeImmutable::now();
+        $now = DateTime::now();
 
         if (!$this->sessionExists) {
             $result = $this->db->builder()
@@ -159,8 +156,7 @@ class DatabaseSessionHandler extends SessionHandler implements SessionHandlerInt
                 ->insert([
                     'id' => $sessionId,
                     'data' => $data,
-                    'created' => $this->schema->getType('created')
-                        ->toDatabase($now)
+                    'created' => $this->schema->getType('created')->toDatabase($now)
                 ])
                 ->execute();
         } else {
@@ -171,8 +167,7 @@ class DatabaseSessionHandler extends SessionHandler implements SessionHandlerInt
                 ])
                 ->update([
                     'data' => $data,
-                    'modified' => $this->schema->getType('modified')
-                        ->toDatabase($now)
+                    'modified' => $this->schema->getType('modified')->toDatabase($now)
                 ])
                 ->execute();
         }

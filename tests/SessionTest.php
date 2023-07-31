@@ -3,13 +3,10 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use
-    Fyre\Session\Handlers\FileSessionHandler,
-    Fyre\Session\Session,
-    PHPUnit\Framework\TestCase;
+use Fyre\Session\Session;
+use PHPUnit\Framework\TestCase;
 
-use function
-    sleep;
+use function sleep;
 
 final class SessionTest extends TestCase
 {

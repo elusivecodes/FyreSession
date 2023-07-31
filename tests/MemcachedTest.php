@@ -3,13 +3,11 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use
-    Fyre\Session\Handlers\MemcachedSessionHandler,
-    Fyre\Session\Session,
-    PHPUnit\Framework\TestCase;
+use Fyre\Session\Handlers\MemcachedSessionHandler;
+use Fyre\Session\Session;
+use PHPUnit\Framework\TestCase;
 
-use function
-    getenv;
+use function getenv;
 
 final class MemcachedTest extends TestCase
 {

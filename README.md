@@ -1,6 +1,6 @@
 # FyreSession
 
-**FyreSession** is a free, session library for *PHP*.
+**FyreSession** is a free, open-source session library for *PHP*.
 
 
 ## Table Of Contents

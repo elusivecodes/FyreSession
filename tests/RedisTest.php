@@ -3,13 +3,11 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use
-    Fyre\Session\Handlers\RedisSessionHandler,
-    Fyre\Session\Session,
-    PHPUnit\Framework\TestCase;
+use Fyre\Session\Handlers\RedisSessionHandler;
+use Fyre\Session\Session;
+use PHPUnit\Framework\TestCase;
 
-use function
-    getenv;
+use function getenv;
 
 final class RedisTest extends TestCase
 {

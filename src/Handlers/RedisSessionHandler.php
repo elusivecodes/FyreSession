@@ -3,15 +3,13 @@ declare(strict_types=1);
 
 namespace Fyre\Session\Handlers;
 
-use
-    Fyre\Session\SessionHandler,
-    Fyre\Session\Exceptions\SessionException,
-    Redis,
-    RedisException,
-    SessionHandlerInterface;
+use Fyre\Session\SessionHandler;
+use Fyre\Session\Exceptions\SessionException;
+use Redis;
+use RedisException;
+use SessionHandlerInterface;
 
-use function
-    sleep;
+use function sleep;
 
 /**
  * RedisSessionHelper

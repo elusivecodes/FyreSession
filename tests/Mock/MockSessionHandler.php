@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace Tests\Mock;
 
-use
-    Fyre\Session\SessionHandler,
-    SessionHandlerInterface;
+use Fyre\Session\SessionHandler;
+use SessionHandlerInterface;
 
 /**
  * MockSessionHandler

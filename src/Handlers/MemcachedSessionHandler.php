@@ -3,14 +3,12 @@ declare(strict_types=1);
 
 namespace Fyre\Session\Handlers;
 
-use
-    Fyre\Session\SessionHandler,
-    Fyre\Session\Exceptions\SessionException,
-    Memcached,
-    SessionHandlerInterface;
+use Fyre\Session\SessionHandler;
+use Fyre\Session\Exceptions\SessionException;
+use Memcached;
+use SessionHandlerInterface;
 
-use function
-    sleep;
+use function sleep;
 
 /**
  * MemcachedSessionHelper
