@@ -1,4 +1,4 @@
-<phpunit>
+<phpunit bootstrap="tests/bootstrap.php">
     <php>
         <env name="DB_HOST" value="127.0.0.1" force="true" />
         <env name="DB_USERNAME" value="root" force="true" />
