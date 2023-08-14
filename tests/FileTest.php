@@ -13,7 +13,7 @@ final class FileTest extends TestCase
 
     protected FileSessionHandler $handler;
 
-    public function testRead()
+    public function testRead(): void
     {
         $id = Session::id();
 
@@ -32,7 +32,7 @@ final class FileTest extends TestCase
         );
     }
 
-    public function testUpate()
+    public function testUpate(): void
     {
         $id = Session::id();
 
@@ -60,7 +60,7 @@ final class FileTest extends TestCase
         );
     }
 
-    public function testGc()
+    public function testGc(): void
     {
         $id = Session::id();
 

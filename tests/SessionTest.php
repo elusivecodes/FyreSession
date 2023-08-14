@@ -11,7 +11,7 @@ use function sleep;
 final class SessionTest extends TestCase
 {
 
-    public function testConsume()
+    public function testConsume(): void
     {
         Session::set('test', 'value');
 
@@ -25,7 +25,7 @@ final class SessionTest extends TestCase
         );
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         Session::set('test', 'value');
 
@@ -35,7 +35,7 @@ final class SessionTest extends TestCase
         );
     }
 
-    public function testHas()
+    public function testHas(): void
     {
         Session::set('test', 'value');
 
@@ -44,7 +44,7 @@ final class SessionTest extends TestCase
         );
     }
 
-    public function testId()
+    public function testId(): void
     {
         $this->assertMatchesRegularExpression(
             '/[a-z0-9]{26}/',
@@ -52,14 +52,14 @@ final class SessionTest extends TestCase
         );
     }
 
-    public function testIsActive()
+    public function testIsActive(): void
     {
         $this->assertTrue(
             Session::isActive()
         );
     }
 
-    public function testSetFlash()
+    public function testSetFlash(): void
     {
         Session::setFlash('test', 'value');
 
@@ -75,7 +75,7 @@ final class SessionTest extends TestCase
         );
     }
 
-    public function testSetTemp()
+    public function testSetTemp(): void
     {
         Session::setTemp('test', 'value', 2);
 

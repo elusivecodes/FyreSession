@@ -14,7 +14,7 @@ final class MemcachedTest extends TestCase
 
     protected MemcachedSessionHandler $handler;
 
-    public function testRead()
+    public function testRead(): void
     {
         $id = Session::id();
 
@@ -33,7 +33,7 @@ final class MemcachedTest extends TestCase
         );
     }
 
-    public function testUpate()
+    public function testUpate(): void
     {
         $id = Session::id();
 

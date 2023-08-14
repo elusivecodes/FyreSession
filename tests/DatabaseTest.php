@@ -16,7 +16,7 @@ final class DatabaseTest extends TestCase
 
     protected DatabaseSessionHandler $handler;
 
-    public function testRead()
+    public function testRead(): void
     {
         $id = Session::id();
 
@@ -35,7 +35,7 @@ final class DatabaseTest extends TestCase
         );
     }
 
-    public function testUpate()
+    public function testUpate(): void
     {
         $id = Session::id();
 
@@ -63,7 +63,7 @@ final class DatabaseTest extends TestCase
         );
     }
 
-    public function testGc()
+    public function testGc(): void
     {
         $id = Session::id();
 
