@@ -84,9 +84,8 @@ final class DatabaseTest extends TestCase
         $this->assertSame(
             0,
             ConnectionManager::use()
-                ->builder()
                 ->select()
-                ->table('sessions')
+                ->from('sessions')
                 ->execute()
                 ->count()
         );

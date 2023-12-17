@@ -48,12 +48,11 @@ class DatabaseSessionHandler extends SessionHandler implements SessionHandlerInt
             return false;
         }
 
-        $result = $this->db->builder()
-            ->table($this->table)
+        $result = $this->db->delete()
+            ->from($this->table)
             ->where([
                 'id' => $sessionId
             ])
-            ->delete()
             ->execute();
 
         if (!$this->destroyCookie()) {
@@ -72,8 +71,8 @@ class DatabaseSessionHandler extends SessionHandler implements SessionHandlerInt
     {
         $maxLife = DateTime::now()->sub($expires, 'seconds');
 
-        $this->db->builder()
-            ->table($this->table)
+        $this->db->delete()
+            ->from($this->table)
             ->where([
                 'or' => [
                     [
@@ -83,7 +82,6 @@ class DatabaseSessionHandler extends SessionHandler implements SessionHandlerInt
                     'modified <' => $this->schema->getType('modified')->toDatabase($maxLife)
                 ]
             ])
-            ->delete()
             ->execute();
 
         return $this->db->affectedRows();
@@ -118,9 +116,11 @@ class DatabaseSessionHandler extends SessionHandler implements SessionHandlerInt
             return false;
         }
 
-        $result = $this->db->builder()
-            ->table($this->table)
-            ->select('data')
+        $result = $this->db
+            ->select([
+                'data'
+            ])
+            ->from($this->table)
             ->where([
                 'id' => $sessionId
             ])
@@ -151,23 +151,24 @@ class DatabaseSessionHandler extends SessionHandler implements SessionHandlerInt
         $now = DateTime::now();
 
         if (!$this->sessionExists) {
-            $result = $this->db->builder()
-                ->table($this->table)
-                ->insert([
-                    'id' => $sessionId,
-                    'data' => $data,
-                    'created' => $this->schema->getType('created')->toDatabase($now)
+            $result = $this->db->insert()
+                ->into($this->table)
+                ->values([
+                    [
+                        'id' => $sessionId,
+                        'data' => $data,
+                        'created' => $this->schema->getType('created')->toDatabase($now)
+                    ]
                 ])
                 ->execute();
         } else {
-            $result = $this->db->builder()
-                ->table($this->table)
-                ->where([
-                    'id' => $sessionId
-                ])
-                ->update([
+            $result = $this->db->update($this->table)
+                ->set([
                     'data' => $data,
                     'modified' => $this->schema->getType('modified')->toDatabase($now)
+                ])
+                ->where([
+                    'id' => $sessionId
                 ])
                 ->execute();
         }
@@ -188,8 +189,10 @@ class DatabaseSessionHandler extends SessionHandler implements SessionHandlerInt
      */
     protected function getLock(string $sessionId): bool
     {
-        $result = $this->db->builder()
-            ->select('GET_LOCK('.$this->db->quote($sessionId).', 300)')
+        $result = $this->db
+            ->select([
+                'GET_LOCK('.$this->db->quote($sessionId).', 300)'
+            ])
             ->execute()
             ->first();
 
@@ -212,8 +215,10 @@ class DatabaseSessionHandler extends SessionHandler implements SessionHandlerInt
             return true;
         }
 
-        $result = $this->db->builder()
-            ->select('RELEASE_LOCK('.$this->db->quote($this->sessionId).')')
+        $result = $this->db
+            ->select([
+                'RELEASE_LOCK('.$this->db->quote($this->sessionId).')'
+            ])
             ->execute()
             ->first();
 
