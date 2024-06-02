@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Fyre\Session;
 
+use SessionHandlerInterface;
+
 use function array_key_exists;
 use function array_replace_recursive;
 use function headers_sent;
@@ -16,7 +18,7 @@ use function time;
 /**
  * SessionHandler
  */
-abstract class SessionHandler
+abstract class SessionHandler implements SessionHandlerInterface
 {
 
     protected static array $defaults = [

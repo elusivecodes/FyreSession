@@ -9,12 +9,11 @@ use Fyre\DB\Connection;
 use Fyre\Schema\SchemaRegistry;
 use Fyre\Schema\TableSchema;
 use Fyre\Session\SessionHandler;
-use SessionHandlerInterface;
 
 /**
  * DatabaseSessionHandler
  */
-class DatabaseSessionHandler extends SessionHandler implements SessionHandlerInterface
+class DatabaseSessionHandler extends SessionHandler
 {
 
     protected static array $defaults = [
@@ -69,7 +68,7 @@ class DatabaseSessionHandler extends SessionHandler implements SessionHandlerInt
      */
     public function gc(int $expires): int|false
     {
-        $maxLife = DateTime::now()->sub($expires, 'seconds');
+        $maxLife = DateTime::now()->subSeconds($expires);
 
         $this->db->delete()
             ->from($this->table)

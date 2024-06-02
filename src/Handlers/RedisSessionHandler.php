@@ -7,14 +7,13 @@ use Fyre\Session\SessionHandler;
 use Fyre\Session\Exceptions\SessionException;
 use Redis;
 use RedisException;
-use SessionHandlerInterface;
 
 use function sleep;
 
 /**
  * RedisSessionHelper
  */
-class RedisSessionHandler extends SessionHandler implements SessionHandlerInterface
+class RedisSessionHandler extends SessionHandler
 {
 
     protected static array $defaults =[ 
@@ -97,7 +96,7 @@ class RedisSessionHandler extends SessionHandler implements SessionHandlerInterf
             }
 
             if ($this->config['database'] && !$this->connection->select($this->config['database'])) {
-                throw CacheException::forInvalidDatabase($this->config['database']);
+                throw SessionException::forInvalidDatabase($this->config['database']);
             }
 
         } catch (RedisException $e) {

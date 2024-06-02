@@ -7,7 +7,6 @@ use Fyre\FileSystem\File;
 use Fyre\FileSystem\Folder;
 use Fyre\Session\SessionHandler;
 use Fyre\Utility\Path;
-use SessionHandlerInterface;
 
 use const LOCK_EX;
 
@@ -16,7 +15,7 @@ use function time;
 /**
  * FileSessionHandler
  */
-class FileSessionHandler extends SessionHandler implements SessionHandlerInterface
+class FileSessionHandler extends SessionHandler
 {
 
     protected Folder $folder;

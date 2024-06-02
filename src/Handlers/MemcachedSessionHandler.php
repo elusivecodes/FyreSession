@@ -3,17 +3,17 @@ declare(strict_types=1);
 
 namespace Fyre\Session\Handlers;
 
+use Exception;
 use Fyre\Session\SessionHandler;
 use Fyre\Session\Exceptions\SessionException;
 use Memcached;
-use SessionHandlerInterface;
 
 use function sleep;
 
 /**
  * MemcachedSessionHelper
  */
-class MemcachedSessionHandler extends SessionHandler implements SessionHandlerInterface
+class MemcachedSessionHandler extends SessionHandler
 {
 
     protected static array $defaults =[ 
