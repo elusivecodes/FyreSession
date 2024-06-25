@@ -11,7 +11,6 @@ use SessionHandlerInterface;
  */
 class MockSessionHandler extends SessionHandler implements SessionHandlerInterface
 {
-
     public function close(): bool
     {
         return true;
@@ -22,7 +21,7 @@ class MockSessionHandler extends SessionHandler implements SessionHandlerInterfa
         return true;
     }
 
-    public function gc(int $expires): int|false
+    public function gc(int $expires): false|int
     {
         return 1;
     }
@@ -32,7 +31,7 @@ class MockSessionHandler extends SessionHandler implements SessionHandlerInterfa
         return true;
     }
 
-    public function read(string $sessionId): string|false
+    public function read(string $sessionId): false|string
     {
         return '';
     }
@@ -41,5 +40,4 @@ class MockSessionHandler extends SessionHandler implements SessionHandlerInterfa
     {
         return true;
     }
-
 }

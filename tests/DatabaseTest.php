@@ -13,8 +13,35 @@ use function getenv;
 
 final class DatabaseTest extends TestCase
 {
-
     protected DatabaseSessionHandler $handler;
+
+    public function testGc(): void
+    {
+        $id = Session::id();
+
+        $this->assertSame(
+            '',
+            $this->handler->read($id)
+        );
+
+        $this->assertTrue(
+            $this->handler->write($id, 'data1')
+        );
+
+        $this->assertSame(
+            1,
+            $this->handler->gc(-1)
+        );
+
+        $this->assertSame(
+            0,
+            ConnectionManager::use()
+                ->select()
+                ->from('sessions')
+                ->execute()
+                ->count()
+        );
+    }
 
     public function testRead(): void
     {
@@ -63,32 +90,42 @@ final class DatabaseTest extends TestCase
         );
     }
 
-    public function testGc(): void
+    public static function setUpBeforeClass(): void
     {
-        $id = Session::id();
+        ConnectionManager::clear();
 
-        $this->assertSame(
-            '',
-            $this->handler->read($id)
-        );
+        ConnectionManager::setConfig('default', [
+            'className' => MySQLConnection::class,
+            'host' => getenv('DB_HOST'),
+            'username' => getenv('DB_USERNAME'),
+            'password' => getenv('DB_PASSWORD'),
+            'database' => getenv('DB_NAME'),
+            'port' => getenv('DB_PORT'),
+            'collation' => 'utf8mb4_unicode_ci',
+            'charset' => 'utf8mb4',
+            'compress' => true,
+            'persist' => true,
+        ]);
 
-        $this->assertTrue(
-            $this->handler->write($id, 'data1')
-        );
+        $connection = ConnectionManager::use();
 
-        $this->assertSame(
-            1,
-            $this->handler->gc(-1)
-        );
+        $connection->query('DROP TABLE IF EXISTS `sessions`');
 
-        $this->assertSame(
-            0,
-            ConnectionManager::use()
-                ->select()
-                ->from('sessions')
-                ->execute()
-                ->count()
-        );
+        $connection->query(<<<'EOT'
+            CREATE TABLE `sessions` (
+                `id` VARCHAR(40) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+                `data` BLOB NULL DEFAULT NULL,
+                `created` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                `modified` DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`)
+            ) COLLATE='utf8mb4_unicode_ci' ENGINE=InnoDB
+        EOT);
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        $connection = ConnectionManager::use();
+        $connection->query('DROP TABLE IF EXISTS `sessions`');
     }
 
     protected function setUp(): void
@@ -112,43 +149,4 @@ final class DatabaseTest extends TestCase
             $this->handler->close()
         );
     }
-
-    public static function setUpBeforeClass(): void
-    {
-        ConnectionManager::clear();
-
-        ConnectionManager::setConfig('default', [
-            'className' => MySQLConnection::class,
-            'host' => getenv('DB_HOST'),
-            'username' => getenv('DB_USERNAME'),
-            'password' => getenv('DB_PASSWORD'),
-            'database' => getenv('DB_NAME'),
-            'port' => getenv('DB_PORT'),
-            'collation' => 'utf8mb4_unicode_ci',
-            'charset' => 'utf8mb4',
-            'compress' => true,
-            'persist' => true
-        ]);
-
-        $connection = ConnectionManager::use();
-
-        $connection->query('DROP TABLE IF EXISTS `sessions`');
-
-        $connection->query(<<<EOT
-            CREATE TABLE `sessions` (
-                `id` VARCHAR(40) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
-                `data` BLOB NULL DEFAULT NULL,
-                `created` DATETIME DEFAULT CURRENT_TIMESTAMP,
-                `modified` DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-                PRIMARY KEY (`id`)
-            ) COLLATE='utf8mb4_unicode_ci' ENGINE=InnoDB
-        EOT);
-    }
-
-    public static function tearDownAfterClass(): void
-    {
-        $connection = ConnectionManager::use();
-        $connection->query('DROP TABLE IF EXISTS `sessions`');
-    }
-
 }

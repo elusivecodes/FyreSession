@@ -9,8 +9,8 @@ use function array_key_exists;
 use function array_replace_recursive;
 use function headers_sent;
 use function ini_get;
-use function session_name;
 use function session_get_cookie_params;
+use function session_name;
 use function setcookie;
 use function strtolower;
 use function time;
@@ -20,7 +20,6 @@ use function time;
  */
 abstract class SessionHandler implements SessionHandlerInterface
 {
-
     protected static array $defaults = [
         'cookieName' => 'FyreSession',
         'cookieLifetime' => 0,
@@ -32,7 +31,7 @@ abstract class SessionHandler implements SessionHandlerInterface
         'path' => 'sessions',
         'refresh' => 300,
         'cleanup' => false,
-        'prefix' => ''
+        'prefix' => '',
     ];
 
     protected array $config = [];
@@ -41,6 +40,7 @@ abstract class SessionHandler implements SessionHandlerInterface
 
     /**
      * New SessionHandler constructor.
+     *
      * @param array $options Options for the handler.
      */
     public function __construct(array $options = [])
@@ -70,25 +70,29 @@ abstract class SessionHandler implements SessionHandlerInterface
 
     /**
      * Close the session.
+     *
      * @return bool TRUE if the session was closed, otherwise FALSE.
      */
     abstract public function close(): bool;
 
     /**
      * Destroy the session.
+     *
      * @return bool TRUE if the session was destroyed, otherwise FALSE.
      */
     abstract public function destroy(string $sessionId): bool;
 
     /**
      * Session garbage collector.
+     *
      * @param int $expires The maximum session lifetime.
      * @return int|false The number of sessions removed.
      */
-    abstract public function gc(int $expires): int|false;
+    abstract public function gc(int $expires): false|int;
 
     /**
      * Get the session handler options.
+     *
      * @return array The session handler options.
      */
     public function getConfig(): array
@@ -98,6 +102,7 @@ abstract class SessionHandler implements SessionHandlerInterface
 
     /**
      * Open the session.
+     *
      * @param string $path The session path.
      * @param string $name The session name.
      * @return bool TRUE if the session was opened, otherwise FALSE.
@@ -106,13 +111,15 @@ abstract class SessionHandler implements SessionHandlerInterface
 
     /**
      * Read the session data.
+     *
      * @param string $sessionId The session ID.
      * @return string|false The session data.
      */
-    abstract public function read(string $sessionId): string|false;
+    abstract public function read(string $sessionId): false|string;
 
     /**
      * Write the session data.
+     *
      * @param string $sessionId The session ID.
      * @param string|false $data The session data.
      * @return bool TRUE if the data was written, otherwise FALSE.
@@ -121,6 +128,7 @@ abstract class SessionHandler implements SessionHandlerInterface
 
     /**
      * Check the session ID.
+     *
      * @param string $sessionId The session ID.
      * @return bool TRUE if the session is valid, otherwise FALSE.
      */
@@ -135,6 +143,7 @@ abstract class SessionHandler implements SessionHandlerInterface
 
     /**
      * Destroy the session cookie.
+     *
      * @param bool TRUE if the cookie was set, otherwise FALSE.
      */
     protected function destroyCookie(): bool
@@ -154,13 +163,14 @@ abstract class SessionHandler implements SessionHandlerInterface
                 'domain' => $params['domain'],
                 'secure' => $params['secure'],
                 'httponly' => $params['httponly'],
-                'samesite' => $params['samesite']
+                'samesite' => $params['samesite'],
             ]
         );
     }
 
     /**
      * Lock the session.
+     *
      * @param string $sessionId The session ID.
      * @return bool TRUE if the session was locked, otherwise FALSE.
      */
@@ -173,6 +183,7 @@ abstract class SessionHandler implements SessionHandlerInterface
 
     /**
      * Get the session key.
+     *
      * @param string $sessionId The session ID.
      * @return string The session key.
      */
@@ -183,6 +194,7 @@ abstract class SessionHandler implements SessionHandlerInterface
 
     /**
      * Unlock the session.
+     *
      * @return bool TRUE if the session was locked, otherwise FALSE.
      */
     protected function releaseLock(): bool
@@ -191,5 +203,4 @@ abstract class SessionHandler implements SessionHandlerInterface
 
         return false;
     }
-
 }

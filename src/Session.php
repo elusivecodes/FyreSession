@@ -6,9 +6,6 @@ namespace Fyre\Session;
 use Closure;
 use Fyre\Session\Exceptions\SessionException;
 
-use const PHP_SAPI;
-use const PHP_SESSION_ACTIVE;
-
 use function array_key_exists;
 use function ini_set;
 use function register_shutdown_function;
@@ -21,15 +18,17 @@ use function session_status;
 use function session_write_close;
 use function time;
 
+use const PHP_SAPI;
+use const PHP_SESSION_ACTIVE;
+
 /**
  * Session
  */
 abstract class Session
 {
+    protected static array $flashData = [];
 
     protected static SessionHandler $handler;
-
-    protected static array $flashData = [];
 
     /**
      * Clear session data.
@@ -45,13 +44,13 @@ abstract class Session
      */
     public static function clearFlashData(): void
     {
-        foreach (static::$flashData AS $key => $value) {
+        foreach (static::$flashData as $key => $value) {
             if (!array_key_exists($key, static::$flashData)) {
                 continue;
             }
 
             static::delete($key);
-        }     
+        }
     }
 
     /**
@@ -63,7 +62,7 @@ abstract class Session
 
         $now = time();
 
-        foreach ($_SESSION['_temp'] AS $key => $expires) {
+        foreach ($_SESSION['_temp'] as $key => $expires) {
             if ($expires > $now || !array_key_exists($key, $_SESSION)) {
                 continue;
             }
@@ -74,6 +73,7 @@ abstract class Session
 
     /**
      * Close the session.
+     *
      * @return bool TRUE if the session was closed, otherwise FALSE.
      */
     public static function close(): bool
@@ -85,6 +85,7 @@ abstract class Session
 
     /**
      * Retrieve and delete a value from the session.
+     *
      * @param string $key The session key.
      * @return mixed The value.
      */
@@ -99,6 +100,7 @@ abstract class Session
 
     /**
      * Delete a value from the session.
+     *
      * @param string $key The session key.
      */
     public static function delete(string $key): void
@@ -110,6 +112,7 @@ abstract class Session
 
     /**
      * Destroy the session.
+     *
      * @return bool TRUE if the session was destroyed, otherwise FALSE.
      */
     public static function destroy(): bool
@@ -119,6 +122,7 @@ abstract class Session
 
     /**
      * Retrieve a value from the session.
+     *
      * @param string $key The session key.
      * @return mixed The session value.
      */
@@ -129,6 +133,7 @@ abstract class Session
 
     /**
      * Get the SessionHandler.
+     *
      * @return SessionHandler|null The SessionHandler.
      */
     public static function getHandler(): SessionHandler|null
@@ -138,6 +143,7 @@ abstract class Session
 
     /**
      * Determine if a value exists in the session.
+     *
      * @param string $key The session key.
      * @return bool TRUE if the item exists, otherwise FALSE.
      */
@@ -148,6 +154,7 @@ abstract class Session
 
     /**
      * Get the session ID.
+     *
      * @return string|null The session ID.
      */
     public static function id(): string|null
@@ -157,6 +164,7 @@ abstract class Session
 
     /**
      * Determine if the session is active.
+     *
      * @return bool TRUE if the session is active, otherwise FALSE.
      */
     public static function isActive(): bool
@@ -166,6 +174,7 @@ abstract class Session
 
     /**
      * Refresh the session ID.
+     *
      * @param bool $deleteOldSession Whether to delete the old session data.
      */
     public static function refresh(bool $deleteOldSession = false): void
@@ -177,7 +186,9 @@ abstract class Session
 
     /**
      * Register the session handler.
+     *
      * @param array $options The options for the session handler.
+     *
      * @throws SessionException if the session is already started, or the handler is not valid.
      */
     public static function register(array $options): void
@@ -228,7 +239,7 @@ abstract class Session
         session_set_save_handler(static::$handler);
 
         session_start();
-    
+
         static::$handler->checkRefresh();
 
         static::rotateFlashData();
@@ -242,11 +253,12 @@ abstract class Session
     {
         static::$flashData = $_SESSION['_flash'] ?? [];
 
-        $_SESSION['_flash'] = [];   
+        $_SESSION['_flash'] = [];
     }
 
     /**
      * Set a session value.
+     *
      * @param string $key The session key.
      * @param mixed $value The session value.
      */
@@ -260,6 +272,7 @@ abstract class Session
 
     /**
      * Set a session flash value.
+     *
      * @param string $key The session key.
      * @param mixed $value The session value.
      */
@@ -272,6 +285,7 @@ abstract class Session
 
     /**
      * Set a session temporary value.
+     *
      * @param string $key The session key.
      * @param mixed $value The session value.
      * @param int $expire The expiry time for the value.
@@ -282,5 +296,4 @@ abstract class Session
 
         $_SESSION['_temp'][$key] = time() + $expire;
     }
-
 }

@@ -5,5 +5,5 @@ use Fyre\Session\Session;
 use Tests\Mock\MockSessionHandler;
 
 Session::register([
-    'className' => MockSessionHandler::class
+    'className' => MockSessionHandler::class,
 ]);

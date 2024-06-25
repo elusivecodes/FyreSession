@@ -10,7 +10,6 @@ use RunTimeException;
  */
 class SessionException extends RunTimeException
 {
-
     public static function forAuthFailed(): static
     {
         return new static('Session handler authentication failed');
@@ -40,5 +39,4 @@ class SessionException extends RunTimeException
     {
         return new static('Session already started');
     }
-
 }

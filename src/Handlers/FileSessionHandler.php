@@ -8,22 +8,22 @@ use Fyre\FileSystem\Folder;
 use Fyre\Session\SessionHandler;
 use Fyre\Utility\Path;
 
-use const LOCK_EX;
-
 use function time;
+
+use const LOCK_EX;
 
 /**
  * FileSessionHandler
  */
 class FileSessionHandler extends SessionHandler
 {
+    protected File|null $file = null;
 
     protected Folder $folder;
 
-    protected File|null $file = null;
-
     /**
      * Close the session.
+     *
      * @return bool TRUE if the session was closed, otherwise FALSE.
      */
     public function close(): bool
@@ -33,6 +33,7 @@ class FileSessionHandler extends SessionHandler
 
     /**
      * Destroy the session.
+     *
      * @return bool TRUE if the session was destroyed, otherwise FALSE.
      */
     public function destroy(string $sessionId): bool
@@ -52,17 +53,18 @@ class FileSessionHandler extends SessionHandler
 
     /**
      * Session garbage collector.
+     *
      * @param int $expires The maximum session lifetime.
      * @return int|false The number of sessions removed.
      */
-    public function gc(int $expires): int|false
+    public function gc(int $expires): false|int
     {
         $maxLife = time() - $expires;
 
         $contents = $this->folder->contents();
 
         $deleted = 0;
-        foreach ($contents AS $item) {
+        foreach ($contents as $item) {
             if ($item instanceof Folder || $item->modifiedTime() >= $maxLife) {
                 continue;
             }
@@ -76,6 +78,7 @@ class FileSessionHandler extends SessionHandler
 
     /**
      * Open the session.
+     *
      * @param string $path The session path.
      * @param string $name The session name.
      * @return bool TRUE if the session was opened, otherwise FALSE.
@@ -89,10 +92,11 @@ class FileSessionHandler extends SessionHandler
 
     /**
      * Read the session data.
+     *
      * @param string $sessionId The session ID.
      * @return string|false The session data.
      */
-    public function read(string $sessionId): string|false
+    public function read(string $sessionId): false|string
     {
         if (!$this->checkSession($sessionId)) {
             return '';
@@ -103,6 +107,7 @@ class FileSessionHandler extends SessionHandler
 
     /**
      * Write the session data.
+     *
      * @param string $sessionId The session ID.
      * @param string|false $data The session data.
      * @return bool TRUE if the data was written, otherwise FALSE.
@@ -122,6 +127,7 @@ class FileSessionHandler extends SessionHandler
 
     /**
      * Lock the session.
+     *
      * @param string $sessionId The session ID.
      * @return bool TRUE if the session was locked, otherwise FALSE.
      */
@@ -143,6 +149,7 @@ class FileSessionHandler extends SessionHandler
 
     /**
      * Unlock the session.
+     *
      * @return bool TRUE if the session was locked, otherwise FALSE.
      */
     protected function releaseLock(): bool
@@ -159,5 +166,4 @@ class FileSessionHandler extends SessionHandler
 
         return true;
     }
-
 }

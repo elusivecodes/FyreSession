@@ -10,8 +10,32 @@ use PHPUnit\Framework\TestCase;
 
 final class FileTest extends TestCase
 {
-
     protected FileSessionHandler $handler;
+
+    public function testGc(): void
+    {
+        $id = Session::id();
+
+        $this->assertSame(
+            '',
+            $this->handler->read($id)
+        );
+
+        $this->assertTrue(
+            $this->handler->write($id, 'data1')
+        );
+
+        $this->assertSame(
+            1,
+            $this->handler->gc(-1)
+        );
+
+        $this->assertTrue(
+            (new Folder('sessions'))->isEmpty()
+        );
+
+        $this->handler->close();
+    }
 
     public function testRead(): void
     {
@@ -60,29 +84,9 @@ final class FileTest extends TestCase
         );
     }
 
-    public function testGc(): void
+    public static function tearDownAfterClass(): void
     {
-        $id = Session::id();
-
-        $this->assertSame(
-            '',
-            $this->handler->read($id)
-        );
-
-        $this->assertTrue(
-            $this->handler->write($id, 'data1')
-        );
-
-        $this->assertSame(
-            1,
-            $this->handler->gc(-1)
-        );
-
-        $this->assertTrue(
-            (new Folder('sessions'))->isEmpty()
-        );
-
-        $this->handler->close();
+        (new Folder('sessions'))->delete();
     }
 
     protected function setUp(): void
@@ -106,10 +110,4 @@ final class FileTest extends TestCase
             $this->handler->close()
         );
     }
-
-    public static function tearDownAfterClass(): void
-    {
-        (new Folder('sessions'))->delete();
-    }
-
 }

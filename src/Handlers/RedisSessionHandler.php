@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Fyre\Session\Handlers;
 
-use Fyre\Session\SessionHandler;
 use Fyre\Session\Exceptions\SessionException;
+use Fyre\Session\SessionHandler;
 use Redis;
 use RedisException;
 
@@ -15,20 +15,20 @@ use function sleep;
  */
 class RedisSessionHandler extends SessionHandler
 {
-
-    protected static array $defaults =[ 
+    protected static array $defaults = [
         'host' => '127.0.0.1',
         'password' => null,
         'port' => 6379,
         'database' => null,
         'timeout' => 0,
-        'prefix' => 'session:'
+        'prefix' => 'session:',
     ];
 
     protected Redis $connection;
 
     /**
      * Close the session.
+     *
      * @return bool TRUE if the session was closed, otherwise FALSE.
      */
     public function close(): bool
@@ -44,6 +44,7 @@ class RedisSessionHandler extends SessionHandler
 
     /**
      * Destroy the session.
+     *
      * @return bool TRUE if the session was destroyed, otherwise FALSE.
      */
     public function destroy(string $sessionId): bool
@@ -67,26 +68,29 @@ class RedisSessionHandler extends SessionHandler
 
     /**
      * Session garbage collector.
+     *
      * @param int $expires The maximum session lifetime.
      * @return int|false The number of sessions removed.
      */
-    public function gc(int $expires): int|false
+    public function gc(int $expires): false|int
     {
         return 1;
     }
 
     /**
      * Open the session.
+     *
      * @param string $path The session path.
      * @param string $name The session name.
      * @return bool TRUE if the session was opened, otherwise FALSE.
+     *
      * @throws SessionException if the connection is not valid.
      */
     public function open(string $path, string $name): bool
     {
         try {
             $this->connection = new Redis();
-    
+
             if (!$this->connection->connect($this->config['host'], (int) $this->config['port'], $this->config['timeout'])) {
                 throw SessionException::forConnectionFailed();
             }
@@ -108,10 +112,11 @@ class RedisSessionHandler extends SessionHandler
 
     /**
      * Read the session data.
+     *
      * @param string $sessionId The session ID.
      * @return string|false The session data.
      */
-    public function read(string $sessionId): string|false
+    public function read(string $sessionId): false|string
     {
         if (!$this->checkSession($sessionId)) {
             return false;
@@ -124,6 +129,7 @@ class RedisSessionHandler extends SessionHandler
 
     /**
      * Write the session data.
+     *
      * @param string $sessionId The session ID.
      * @param string|false $data The session data.
      * @return bool TRUE if the data was written, otherwise FALSE.
@@ -145,6 +151,7 @@ class RedisSessionHandler extends SessionHandler
 
     /**
      * Lock the session.
+     *
      * @param string $sessionId The session ID.
      * @return bool TRUE if the session was locked, otherwise FALSE.
      */
@@ -158,6 +165,7 @@ class RedisSessionHandler extends SessionHandler
         do {
             if ($this->connection->ttl($lockKey) > 0) {
                 sleep(1);
+
                 continue;
             }
 
@@ -173,6 +181,7 @@ class RedisSessionHandler extends SessionHandler
 
     /**
      * Unlock the session.
+     *
      * @return bool TRUE if the session was locked, otherwise FALSE.
      */
     protected function releaseLock(): bool
@@ -191,5 +200,4 @@ class RedisSessionHandler extends SessionHandler
 
         return true;
     }
-
 }

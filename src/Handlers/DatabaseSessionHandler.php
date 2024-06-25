@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Fyre\Session\Handlers;
 
 use Fyre\DateTime\DateTime;
-use Fyre\DB\ConnectionManager;
 use Fyre\DB\Connection;
+use Fyre\DB\ConnectionManager;
 use Fyre\Schema\SchemaRegistry;
 use Fyre\Schema\TableSchema;
 use Fyre\Session\SessionHandler;
@@ -15,21 +15,21 @@ use Fyre\Session\SessionHandler;
  */
 class DatabaseSessionHandler extends SessionHandler
 {
-
     protected static array $defaults = [
-        'connectionKey' => 'default'
+        'connectionKey' => 'default',
     ];
 
     protected Connection $db;
 
     protected TableSchema $schema;
 
-    protected string $table;
-
     protected bool $sessionExists = false;
+
+    protected string $table;
 
     /**
      * Close the session.
+     *
      * @return bool TRUE if the session was closed, otherwise FALSE.
      */
     public function close(): bool
@@ -39,6 +39,7 @@ class DatabaseSessionHandler extends SessionHandler
 
     /**
      * Destroy the session.
+     *
      * @return bool TRUE if the session was destroyed, otherwise FALSE.
      */
     public function destroy(string $sessionId): bool
@@ -50,7 +51,7 @@ class DatabaseSessionHandler extends SessionHandler
         $result = $this->db->delete()
             ->from($this->table)
             ->where([
-                'id' => $sessionId
+                'id' => $sessionId,
             ])
             ->execute();
 
@@ -63,10 +64,11 @@ class DatabaseSessionHandler extends SessionHandler
 
     /**
      * Session garbage collector.
+     *
      * @param int $expires The maximum session lifetime.
      * @return int|false The number of sessions removed.
      */
-    public function gc(int $expires): int|false
+    public function gc(int $expires): false|int
     {
         $maxLife = DateTime::now()->subSeconds($expires);
 
@@ -76,10 +78,10 @@ class DatabaseSessionHandler extends SessionHandler
                 'or' => [
                     [
                         'created <' => $this->schema->getType('created')->toDatabase($maxLife),
-                        'modified IS NULL'
+                        'modified IS NULL',
                     ],
-                    'modified <' => $this->schema->getType('modified')->toDatabase($maxLife)
-                ]
+                    'modified <' => $this->schema->getType('modified')->toDatabase($maxLife),
+                ],
             ])
             ->execute();
 
@@ -88,6 +90,7 @@ class DatabaseSessionHandler extends SessionHandler
 
     /**
      * Open the session.
+     *
      * @param string $path The session path.
      * @param string $name The session name.
      * @return bool TRUE if the session was opened, otherwise FALSE.
@@ -106,10 +109,11 @@ class DatabaseSessionHandler extends SessionHandler
 
     /**
      * Read the session data.
+     *
      * @param string $sessionId The session ID.
      * @return string|false The session data.
      */
-    public function read(string $sessionId): string|false
+    public function read(string $sessionId): false|string
     {
         if (!$this->checkSession($sessionId)) {
             return false;
@@ -117,11 +121,11 @@ class DatabaseSessionHandler extends SessionHandler
 
         $result = $this->db
             ->select([
-                'data'
+                'data',
             ])
             ->from($this->table)
             ->where([
-                'id' => $sessionId
+                'id' => $sessionId,
             ])
             ->execute()
             ->first();
@@ -137,6 +141,7 @@ class DatabaseSessionHandler extends SessionHandler
 
     /**
      * Write the session data.
+     *
      * @param string $sessionId The session ID.
      * @param string|false $data The session data.
      * @return bool TRUE if the data was written, otherwise FALSE.
@@ -156,18 +161,18 @@ class DatabaseSessionHandler extends SessionHandler
                     [
                         'id' => $sessionId,
                         'data' => $data,
-                        'created' => $this->schema->getType('created')->toDatabase($now)
-                    ]
+                        'created' => $this->schema->getType('created')->toDatabase($now),
+                    ],
                 ])
                 ->execute();
         } else {
             $result = $this->db->update($this->table)
                 ->set([
                     'data' => $data,
-                    'modified' => $this->schema->getType('modified')->toDatabase($now)
+                    'modified' => $this->schema->getType('modified')->toDatabase($now),
                 ])
                 ->where([
-                    'id' => $sessionId
+                    'id' => $sessionId,
                 ])
                 ->execute();
         }
@@ -183,6 +188,7 @@ class DatabaseSessionHandler extends SessionHandler
 
     /**
      * Lock the session.
+     *
      * @param string $sessionId The session ID.
      * @return bool TRUE if the session was locked, otherwise FALSE.
      */
@@ -190,7 +196,7 @@ class DatabaseSessionHandler extends SessionHandler
     {
         $result = $this->db
             ->select([
-                'GET_LOCK('.$this->db->quote($sessionId).', 300)'
+                'GET_LOCK('.$this->db->quote($sessionId).', 300)',
             ])
             ->execute()
             ->first();
@@ -206,6 +212,7 @@ class DatabaseSessionHandler extends SessionHandler
 
     /**
      * Unlock the session.
+     *
      * @return bool TRUE if the session was locked, otherwise FALSE.
      */
     protected function releaseLock(): bool
@@ -216,7 +223,7 @@ class DatabaseSessionHandler extends SessionHandler
 
         $result = $this->db
             ->select([
-                'RELEASE_LOCK('.$this->db->quote($this->sessionId).')'
+                'RELEASE_LOCK('.$this->db->quote($this->sessionId).')',
             ])
             ->execute()
             ->first();
@@ -230,5 +237,4 @@ class DatabaseSessionHandler extends SessionHandler
 
         return true;
     }
-
 }

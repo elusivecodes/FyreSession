@@ -10,7 +10,6 @@ use function sleep;
 
 final class SessionTest extends TestCase
 {
-
     public function testConsume(): void
     {
         Session::set('test', 'value');
@@ -104,5 +103,4 @@ final class SessionTest extends TestCase
     {
         Session::clear();
     }
-
 }

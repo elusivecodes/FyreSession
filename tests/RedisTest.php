@@ -11,7 +11,6 @@ use function getenv;
 
 final class RedisTest extends TestCase
 {
-
     protected RedisSessionHandler $handler;
 
     public function testRead(): void
@@ -67,7 +66,7 @@ final class RedisTest extends TestCase
             'host' => getenv('REDIS_HOST'),
             'password' => getenv('REDIS_PASSWORD'),
             'database' => getenv('REDIS_DATABASE'),
-            'port' => getenv('REDIS_PORT')
+            'port' => getenv('REDIS_PORT'),
         ]);
 
         $this->assertTrue(
@@ -87,5 +86,4 @@ final class RedisTest extends TestCase
             $this->handler->close()
         );
     }
-
 }

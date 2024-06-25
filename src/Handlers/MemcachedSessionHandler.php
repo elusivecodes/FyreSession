@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Fyre\Session\Handlers;
 
 use Exception;
-use Fyre\Session\SessionHandler;
 use Fyre\Session\Exceptions\SessionException;
+use Fyre\Session\SessionHandler;
 use Memcached;
 
 use function sleep;
@@ -15,18 +15,18 @@ use function sleep;
  */
 class MemcachedSessionHandler extends SessionHandler
 {
-
-    protected static array $defaults =[ 
+    protected static array $defaults = [
         'host' => '127.0.0.1',
         'port' => 11211,
         'weight' => 1,
-        'prefix' => 'session:'
+        'prefix' => 'session:',
     ];
 
     protected Memcached $connection;
 
     /**
      * Close the session.
+     *
      * @return bool TRUE if the session was closed, otherwise FALSE.
      */
     public function close(): bool
@@ -42,6 +42,7 @@ class MemcachedSessionHandler extends SessionHandler
 
     /**
      * Destroy the session.
+     *
      * @return bool TRUE if the session was destroyed, otherwise FALSE.
      */
     public function destroy(string $sessionId): bool
@@ -65,26 +66,29 @@ class MemcachedSessionHandler extends SessionHandler
 
     /**
      * Session garbage collector.
+     *
      * @param int $expires The maximum session lifetime.
      * @return int|false The number of sessions removed.
      */
-    public function gc(int $expires): int|false
+    public function gc(int $expires): false|int
     {
         return 1;
     }
 
     /**
      * Open the session.
+     *
      * @param string $path The session path.
      * @param string $name The session name.
      * @return bool TRUE if the session was opened, otherwise FALSE.
+     *
      * @throws SessionException if the connection is not valid.
      */
     public function open(string $path, string $name): bool
     {
         try {
             $this->connection = new Memcached();
-    
+
             $this->connection->setOption(Memcached::OPT_BINARY_PROTOCOL, true);
 
             $this->connection->addServer(
@@ -107,10 +111,11 @@ class MemcachedSessionHandler extends SessionHandler
 
     /**
      * Read the session data.
+     *
      * @param string $sessionId The session ID.
      * @return string|false The session data.
      */
-    public function read(string $sessionId): string|false
+    public function read(string $sessionId): false|string
     {
         if (!$this->checkSession($sessionId)) {
             return '';
@@ -129,6 +134,7 @@ class MemcachedSessionHandler extends SessionHandler
 
     /**
      * Write the session data.
+     *
      * @param string $sessionId The session ID.
      * @param string|false $data The session data.
      * @return bool TRUE if the data was written, otherwise FALSE.
@@ -150,6 +156,7 @@ class MemcachedSessionHandler extends SessionHandler
 
     /**
      * Lock the session.
+     *
      * @param string $sessionId The session ID.
      * @return bool TRUE if the session was locked, otherwise FALSE.
      */
@@ -163,12 +170,13 @@ class MemcachedSessionHandler extends SessionHandler
         do {
             if ($this->connection->get($lockKey)) {
                 sleep(1);
+
                 continue;
             }
-    
+
             if ($this->connection->set($lockKey, '1', 300)) {
                 $this->sessionId = $sessionId;
-        
+
                 return true;
             }
         } while ($attempt++ < 30);
@@ -178,6 +186,7 @@ class MemcachedSessionHandler extends SessionHandler
 
     /**
      * Get memcached stats.
+     *
      * @return array|null The memcached stats.
      */
     protected function getStats(): array|null
@@ -185,11 +194,13 @@ class MemcachedSessionHandler extends SessionHandler
         $stats = $this->connection->getStats();
 
         $server = $this->config['host'].':'.$this->config['port'];
+
         return $stats[$server] ?? null;
     }
 
     /**
      * Unlock the session.
+     *
      * @return bool TRUE if the session was locked, otherwise FALSE.
      */
     protected function releaseLock(): bool
@@ -208,5 +219,4 @@ class MemcachedSessionHandler extends SessionHandler
 
         return true;
     }
-
 }

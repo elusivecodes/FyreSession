@@ -11,7 +11,6 @@ use function getenv;
 
 final class MemcachedTest extends TestCase
 {
-
     protected MemcachedSessionHandler $handler;
 
     public function testRead(): void
@@ -65,7 +64,7 @@ final class MemcachedTest extends TestCase
     {
         $this->handler = new MemcachedSessionHandler([
             'host' => getenv('MEMCACHED_HOST'),
-            'port' => getenv('MEMCACHED_PORT')
+            'port' => getenv('MEMCACHED_PORT'),
         ]);
 
         $this->assertTrue(
@@ -85,5 +84,4 @@ final class MemcachedTest extends TestCase
             $this->handler->close()
         );
     }
-
 }
