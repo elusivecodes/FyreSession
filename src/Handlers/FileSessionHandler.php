@@ -55,7 +55,7 @@ class FileSessionHandler extends SessionHandler
      * Session garbage collector.
      *
      * @param int $expires The maximum session lifetime.
-     * @return int|false The number of sessions removed.
+     * @return false|int The number of sessions removed.
      */
     public function gc(int $expires): false|int
     {
@@ -94,7 +94,7 @@ class FileSessionHandler extends SessionHandler
      * Read the session data.
      *
      * @param string $sessionId The session ID.
-     * @return string|false The session data.
+     * @return false|string The session data.
      */
     public function read(string $sessionId): false|string
     {
@@ -109,7 +109,7 @@ class FileSessionHandler extends SessionHandler
      * Write the session data.
      *
      * @param string $sessionId The session ID.
-     * @param string|false $data The session data.
+     * @param false|string $data The session data.
      * @return bool TRUE if the data was written, otherwise FALSE.
      */
     public function write(string $sessionId, string $data): bool

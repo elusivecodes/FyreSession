@@ -4,14 +4,12 @@ declare(strict_types=1);
 namespace Tests;
 
 use Fyre\DB\ConnectionManager;
-use Fyre\DB\Handlers\MySQL\MySQLConnection;
+use Fyre\DB\Handlers\Sqlite\SqliteConnection;
 use Fyre\Session\Handlers\DatabaseSessionHandler;
 use Fyre\Session\Session;
 use PHPUnit\Framework\TestCase;
 
-use function getenv;
-
-final class DatabaseTest extends TestCase
+final class SqliteTest extends TestCase
 {
     protected DatabaseSessionHandler $handler;
 
@@ -62,7 +60,7 @@ final class DatabaseTest extends TestCase
         );
     }
 
-    public function testUpate(): void
+    public function testUpdate(): void
     {
         $id = Session::id();
 
@@ -95,37 +93,29 @@ final class DatabaseTest extends TestCase
         ConnectionManager::clear();
 
         ConnectionManager::setConfig('default', [
-            'className' => MySQLConnection::class,
-            'host' => getenv('DB_HOST'),
-            'username' => getenv('DB_USERNAME'),
-            'password' => getenv('DB_PASSWORD'),
-            'database' => getenv('DB_NAME'),
-            'port' => getenv('DB_PORT'),
-            'collation' => 'utf8mb4_unicode_ci',
-            'charset' => 'utf8mb4',
-            'compress' => true,
+            'className' => SqliteConnection::class,
             'persist' => true,
         ]);
 
         $connection = ConnectionManager::use();
 
-        $connection->query('DROP TABLE IF EXISTS `sessions`');
+        $connection->query('DROP TABLE IF EXISTS sessions');
 
         $connection->query(<<<'EOT'
-            CREATE TABLE `sessions` (
-                `id` VARCHAR(40) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
-                `data` BLOB NULL DEFAULT NULL,
-                `created` DATETIME DEFAULT CURRENT_TIMESTAMP,
-                `modified` DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-                PRIMARY KEY (`id`)
-            ) COLLATE='utf8mb4_unicode_ci' ENGINE=InnoDB
+            CREATE TABLE sessions (
+                id VARCHAR(40) NOT NULL,
+                data BLOB NULL DEFAULT NULL,
+                created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                modified DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (id)
+            )
         EOT);
     }
 
     public static function tearDownAfterClass(): void
     {
         $connection = ConnectionManager::use();
-        $connection->query('DROP TABLE IF EXISTS `sessions`');
+        $connection->query('DROP TABLE IF EXISTS sessions');
     }
 
     protected function setUp(): void

@@ -66,7 +66,7 @@ class DatabaseSessionHandler extends SessionHandler
      * Session garbage collector.
      *
      * @param int $expires The maximum session lifetime.
-     * @return int|false The number of sessions removed.
+     * @return false|int The number of sessions removed.
      */
     public function gc(int $expires): false|int
     {
@@ -111,30 +111,15 @@ class DatabaseSessionHandler extends SessionHandler
      * Read the session data.
      *
      * @param string $sessionId The session ID.
-     * @return string|false The session data.
+     * @return false|string The session data.
      */
     public function read(string $sessionId): false|string
     {
-        if (!$this->checkSession($sessionId)) {
-            return false;
-        }
-
-        $result = $this->db
-            ->select([
-                'data',
-            ])
-            ->from($this->table)
-            ->where([
-                'id' => $sessionId,
-            ])
-            ->execute()
-            ->first();
+        $result = $this->getResult($sessionId);
 
         if (!$result) {
             return '';
         }
-
-        $this->sessionExists = true;
 
         return $result['data'];
     }
@@ -143,7 +128,7 @@ class DatabaseSessionHandler extends SessionHandler
      * Write the session data.
      *
      * @param string $sessionId The session ID.
-     * @param string|false $data The session data.
+     * @param false|string $data The session data.
      * @return bool TRUE if the data was written, otherwise FALSE.
      */
     public function write(string $sessionId, string $data): bool
@@ -162,6 +147,7 @@ class DatabaseSessionHandler extends SessionHandler
                         'id' => $sessionId,
                         'data' => $data,
                         'created' => $this->schema->getType('created')->toDatabase($now),
+                        'modified' => $this->schema->getType('modified')->toDatabase($now),
                     ],
                 ])
                 ->execute();
@@ -187,54 +173,34 @@ class DatabaseSessionHandler extends SessionHandler
     }
 
     /**
-     * Lock the session.
+     * Get the database result for a session ID.
      *
      * @param string $sessionId The session ID.
-     * @return bool TRUE if the session was locked, otherwise FALSE.
+     * @return array|null The database result.
      */
-    protected function getLock(string $sessionId): bool
+    protected function getResult(string $sessionId): array|null
     {
+        if (!$this->checkSession($sessionId)) {
+            return null;
+        }
+
         $result = $this->db
             ->select([
-                'GET_LOCK('.$this->db->quote($sessionId).', 300)',
+                'data',
+            ])
+            ->from($this->table)
+            ->where([
+                'id' => $sessionId,
             ])
             ->execute()
             ->first();
 
         if (!$result) {
-            return false;
+            return null;
         }
 
-        $this->sessionId = $sessionId;
+        $this->sessionExists = true;
 
-        return true;
-    }
-
-    /**
-     * Unlock the session.
-     *
-     * @return bool TRUE if the session was locked, otherwise FALSE.
-     */
-    protected function releaseLock(): bool
-    {
-        if (!$this->sessionId) {
-            return true;
-        }
-
-        $result = $this->db
-            ->select([
-                'RELEASE_LOCK('.$this->db->quote($this->sessionId).')',
-            ])
-            ->execute()
-            ->first();
-
-        if (!$result) {
-            return false;
-        }
-
-        $this->sessionId = null;
-        $this->sessionExists = false;
-
-        return true;
+        return $result;
     }
 }

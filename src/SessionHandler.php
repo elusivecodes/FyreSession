@@ -86,7 +86,7 @@ abstract class SessionHandler implements SessionHandlerInterface
      * Session garbage collector.
      *
      * @param int $expires The maximum session lifetime.
-     * @return int|false The number of sessions removed.
+     * @return false|int The number of sessions removed.
      */
     abstract public function gc(int $expires): false|int;
 
@@ -113,7 +113,7 @@ abstract class SessionHandler implements SessionHandlerInterface
      * Read the session data.
      *
      * @param string $sessionId The session ID.
-     * @return string|false The session data.
+     * @return false|string The session data.
      */
     abstract public function read(string $sessionId): false|string;
 
@@ -121,7 +121,7 @@ abstract class SessionHandler implements SessionHandlerInterface
      * Write the session data.
      *
      * @param string $sessionId The session ID.
-     * @param string|false $data The session data.
+     * @param false|string $data The session data.
      * @return bool TRUE if the data was written, otherwise FALSE.
      */
     abstract public function write(string $sessionId, string $data): bool;
@@ -201,6 +201,6 @@ abstract class SessionHandler implements SessionHandlerInterface
     {
         $this->sessionId = null;
 
-        return false;
+        return true;
     }
 }

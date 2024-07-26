@@ -20,10 +20,10 @@
         }
     },
     "require": {
-        "fyre/db": "^3.0",
+        "fyre/db": "^4.0",
         "fyre/filesystem": "^2.0",
         "fyre/path": "^2.0",
-        "fyre/schema": "^3.0"
+        "fyre/schema": "^4.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.59",

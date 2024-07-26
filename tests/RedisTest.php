@@ -32,7 +32,7 @@ final class RedisTest extends TestCase
         );
     }
 
-    public function testUpate(): void
+    public function testUpdate(): void
     {
         $id = Session::id();
 

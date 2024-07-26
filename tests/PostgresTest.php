@@ -3,14 +3,17 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use Fyre\FileSystem\Folder;
-use Fyre\Session\Handlers\FileSessionHandler;
+use Fyre\DB\ConnectionManager;
+use Fyre\DB\Handlers\Postgres\PostgresConnection;
+use Fyre\Session\Handlers\Database\PostgresSessionHandler;
 use Fyre\Session\Session;
 use PHPUnit\Framework\TestCase;
 
-final class FileTest extends TestCase
+use function getenv;
+
+final class PostgresTest extends TestCase
 {
-    protected FileSessionHandler $handler;
+    protected PostgresSessionHandler $handler;
 
     public function testGc(): void
     {
@@ -30,11 +33,14 @@ final class FileTest extends TestCase
             $this->handler->gc(-1)
         );
 
-        $this->assertTrue(
-            (new Folder('sessions'))->isEmpty()
+        $this->assertSame(
+            0,
+            ConnectionManager::use()
+                ->select()
+                ->from('sessions')
+                ->execute()
+                ->count()
         );
-
-        $this->handler->close();
     }
 
     public function testRead(): void
@@ -84,14 +90,45 @@ final class FileTest extends TestCase
         );
     }
 
+    public static function setUpBeforeClass(): void
+    {
+        ConnectionManager::clear();
+
+        ConnectionManager::setConfig('default', [
+            'className' => PostgresConnection::class,
+            'host' => getenv('POSTGRES_HOST'),
+            'username' => getenv('POSTGRES_USERNAME'),
+            'password' => getenv('POSTGRES_PASSWORD'),
+            'database' => getenv('POSTGRES_DATABASE'),
+            'port' => getenv('POSTGRES_PORT'),
+            'charset' => 'utf8',
+            'persist' => true,
+        ]);
+
+        $connection = ConnectionManager::use();
+
+        $connection->query('DROP TABLE IF EXISTS sessions');
+
+        $connection->query(<<<'EOT'
+            CREATE TABLE sessions (
+                id VARCHAR(40) NOT NULL,
+                data BYTEA NULL DEFAULT NULL,
+                created TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                modified TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP(0),
+                PRIMARY KEY (id)
+            )
+        EOT);
+    }
+
     public static function tearDownAfterClass(): void
     {
-        (new Folder('sessions'))->delete();
+        $connection = ConnectionManager::use();
+        $connection->query('DROP TABLE IF EXISTS sessions');
     }
 
     protected function setUp(): void
     {
-        $this->handler = new FileSessionHandler();
+        $this->handler = new PostgresSessionHandler();
 
         $this->assertTrue(
             $this->handler->open('sessions', '')

@@ -32,7 +32,7 @@ final class MemcachedTest extends TestCase
         );
     }
 
-    public function testUpate(): void
+    public function testUpdate(): void
     {
         $id = Session::id();
 

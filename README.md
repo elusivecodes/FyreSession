@@ -8,6 +8,8 @@
 - [Methods](#methods)
 - [Session Handlers](#session-handlers)
     - [Database](#database)
+        - [MySQL](#mysql)
+        - [Postgres](#postgres)
     - [File](#file)
     - [Memcached](#memcached)
     - [Redis](#redis)
@@ -171,6 +173,52 @@ The Database session handler can be loaded using custom configuration.
 
 - `$options` is an array containing configuration options.
     - `className` must be set to `\Fyre\Session\Handlers\DatabaseSessionHandler`.
+    - `cookieName` is a string representing the cookie name, and will default to "*FyreSession*".
+    - `cookieLifetime` is a number representing the cookie lifetime, and will default to *0*.
+    - `cookieDomain` is a string representing the cookie domain, and will default to "".
+    - `cookiePath` is a string representing the cookie path, and will default to "*/*".
+    - `cookieSecure` is a boolean indicating whether to set a secure cookie, and will default to *true*.
+    - `cookieSameSite` is a string representing the cookie same site, and will default to "*Lax*".
+    - `expires` is a number representing the maximum lifetime of a session, and will default to the `session.gc_maxlifetime` PHP setting.
+    - `refresh` is a number representing the number of seconds before refreshing the session ID, and will default to *300*.
+    - `cleanup` is a boolean indicating whether to delete the old session on refresh, and will default to *false*.
+    - `prefix` is a string representing the session key prefix, and will default to "".
+    - `connectionKey` is a string representing the *Connection* key and will default to "*default*".
+    - `path` is a string representing the table name, and will default to "*sessions*".
+
+```php
+Session::register($options);
+```
+
+#### MySQL
+
+The MySQL database session handler can be loaded using custom configuration.
+
+- `$options` is an array containing configuration options.
+    - `className` must be set to `\Fyre\Session\Handlers\Database\MysqlSessionHandler`.
+    - `cookieName` is a string representing the cookie name, and will default to "*FyreSession*".
+    - `cookieLifetime` is a number representing the cookie lifetime, and will default to *0*.
+    - `cookieDomain` is a string representing the cookie domain, and will default to "".
+    - `cookiePath` is a string representing the cookie path, and will default to "*/*".
+    - `cookieSecure` is a boolean indicating whether to set a secure cookie, and will default to *true*.
+    - `cookieSameSite` is a string representing the cookie same site, and will default to "*Lax*".
+    - `expires` is a number representing the maximum lifetime of a session, and will default to the `session.gc_maxlifetime` PHP setting.
+    - `refresh` is a number representing the number of seconds before refreshing the session ID, and will default to *300*.
+    - `cleanup` is a boolean indicating whether to delete the old session on refresh, and will default to *false*.
+    - `prefix` is a string representing the session key prefix, and will default to "".
+    - `connectionKey` is a string representing the *Connection* key and will default to "*default*".
+    - `path` is a string representing the table name, and will default to "*sessions*".
+
+```php
+Session::register($options);
+```
+
+#### Postgres
+
+The Postgres database session handler can be loaded using custom configuration.
+
+- `$options` is an array containing configuration options.
+    - `className` must be set to `\Fyre\Session\Handlers\Database\PostgresSessionHandler`.
     - `cookieName` is a string representing the cookie name, and will default to "*FyreSession*".
     - `cookieLifetime` is a number representing the cookie lifetime, and will default to *0*.
     - `cookieDomain` is a string representing the cookie domain, and will default to "".

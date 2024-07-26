@@ -68,7 +68,7 @@ class MemcachedSessionHandler extends SessionHandler
      * Session garbage collector.
      *
      * @param int $expires The maximum session lifetime.
-     * @return int|false The number of sessions removed.
+     * @return false|int The number of sessions removed.
      */
     public function gc(int $expires): false|int
     {
@@ -113,7 +113,7 @@ class MemcachedSessionHandler extends SessionHandler
      * Read the session data.
      *
      * @param string $sessionId The session ID.
-     * @return string|false The session data.
+     * @return false|string The session data.
      */
     public function read(string $sessionId): false|string
     {
@@ -136,7 +136,7 @@ class MemcachedSessionHandler extends SessionHandler
      * Write the session data.
      *
      * @param string $sessionId The session ID.
-     * @param string|false $data The session data.
+     * @param false|string $data The session data.
      * @return bool TRUE if the data was written, otherwise FALSE.
      */
     public function write(string $sessionId, string $data): bool
@@ -175,9 +175,7 @@ class MemcachedSessionHandler extends SessionHandler
             }
 
             if ($this->connection->set($lockKey, '1', 300)) {
-                $this->sessionId = $sessionId;
-
-                return true;
+                return parent::getLock($sessionId);
             }
         } while ($attempt++ < 30);
 
@@ -215,8 +213,6 @@ class MemcachedSessionHandler extends SessionHandler
             return false;
         }
 
-        $this->sessionId = null;
-
-        return true;
+        return parent::releaseLock();
     }
 }

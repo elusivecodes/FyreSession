@@ -70,7 +70,7 @@ class RedisSessionHandler extends SessionHandler
      * Session garbage collector.
      *
      * @param int $expires The maximum session lifetime.
-     * @return int|false The number of sessions removed.
+     * @return false|int The number of sessions removed.
      */
     public function gc(int $expires): false|int
     {
@@ -114,12 +114,12 @@ class RedisSessionHandler extends SessionHandler
      * Read the session data.
      *
      * @param string $sessionId The session ID.
-     * @return string|false The session data.
+     * @return false|string The session data.
      */
     public function read(string $sessionId): false|string
     {
         if (!$this->checkSession($sessionId)) {
-            return false;
+            return '';
         }
 
         $key = $this->prepareKey($sessionId);
@@ -131,7 +131,7 @@ class RedisSessionHandler extends SessionHandler
      * Write the session data.
      *
      * @param string $sessionId The session ID.
-     * @param string|false $data The session data.
+     * @param false|string $data The session data.
      * @return bool TRUE if the data was written, otherwise FALSE.
      */
     public function write(string $sessionId, string $data): bool
@@ -170,9 +170,7 @@ class RedisSessionHandler extends SessionHandler
             }
 
             if ($this->connection->setEx($lockKey, 300, '1')) {
-                $this->sessionId = $sessionId;
-
-                return true;
+                return parent::getLock($sessionId);
             }
         } while ($attempt++ < 30);
 
