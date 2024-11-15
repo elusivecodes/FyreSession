@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Tests;
 
+use Fyre\Config\Config;
+use Fyre\Container\Container;
 use Fyre\Session\Handlers\MemcachedSessionHandler;
 use Fyre\Session\Session;
 use PHPUnit\Framework\TestCase;
@@ -13,9 +15,11 @@ final class MemcachedTest extends TestCase
 {
     protected MemcachedSessionHandler $handler;
 
+    protected Session $session;
+
     public function testRead(): void
     {
-        $id = Session::id();
+        $id = $this->session->id();
 
         $this->assertSame(
             '',
@@ -34,7 +38,7 @@ final class MemcachedTest extends TestCase
 
     public function testUpdate(): void
     {
-        $id = Session::id();
+        $id = $this->session->id();
 
         $this->assertSame(
             '',
@@ -62,10 +66,21 @@ final class MemcachedTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->handler = new MemcachedSessionHandler([
-            'host' => getenv('MEMCACHED_HOST'),
-            'port' => getenv('MEMCACHED_PORT'),
+        $container = new Container();
+        $container->singleton(Config::class);
+        $container->singleton(Session::class);
+        $container->use(Config::class)->set('Session', [
+            'handler' => [
+                'className' => MemcachedSessionHandler::class,
+                'host' => getenv('MEMCACHED_HOST'),
+                'port' => getenv('MEMCACHED_PORT'),
+            ],
         ]);
+
+        $this->session = $container->use(Session::class);
+        $this->handler = $this->session->getHandler();
+
+        $this->session->start();
 
         $this->assertTrue(
             $this->handler->open('sessions', '')
@@ -74,7 +89,7 @@ final class MemcachedTest extends TestCase
 
     protected function tearDown(): void
     {
-        $id = Session::id();
+        $id = $this->session->id();
 
         $this->assertTrue(
             $this->handler->destroy($id)

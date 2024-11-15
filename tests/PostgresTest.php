@@ -3,8 +3,12 @@ declare(strict_types=1);
 
 namespace Tests;
 
+use Fyre\Config\Config;
+use Fyre\Container\Container;
+use Fyre\DB\Connection;
 use Fyre\DB\ConnectionManager;
 use Fyre\DB\Handlers\Postgres\PostgresConnection;
+use Fyre\DB\TypeParser;
 use Fyre\Session\Handlers\Database\PostgresSessionHandler;
 use Fyre\Session\Session;
 use PHPUnit\Framework\TestCase;
@@ -13,11 +17,15 @@ use function getenv;
 
 final class PostgresTest extends TestCase
 {
+    protected Connection $db;
+
     protected PostgresSessionHandler $handler;
+
+    protected Session $session;
 
     public function testGc(): void
     {
-        $id = Session::id();
+        $id = $this->session->id();
 
         $this->assertSame(
             '',
@@ -35,7 +43,7 @@ final class PostgresTest extends TestCase
 
         $this->assertSame(
             0,
-            ConnectionManager::use()
+            $this->db
                 ->select()
                 ->from('sessions')
                 ->execute()
@@ -45,7 +53,7 @@ final class PostgresTest extends TestCase
 
     public function testRead(): void
     {
-        $id = Session::id();
+        $id = $this->session->id();
 
         $this->assertSame(
             '',
@@ -64,7 +72,7 @@ final class PostgresTest extends TestCase
 
     public function testUpdate(): void
     {
-        $id = Session::id();
+        $id = $this->session->id();
 
         $this->assertSame(
             '',
@@ -90,26 +98,36 @@ final class PostgresTest extends TestCase
         );
     }
 
-    public static function setUpBeforeClass(): void
+    protected function setUp(): void
     {
-        ConnectionManager::clear();
-
-        ConnectionManager::setConfig('default', [
-            'className' => PostgresConnection::class,
-            'host' => getenv('POSTGRES_HOST'),
-            'username' => getenv('POSTGRES_USERNAME'),
-            'password' => getenv('POSTGRES_PASSWORD'),
-            'database' => getenv('POSTGRES_DATABASE'),
-            'port' => getenv('POSTGRES_PORT'),
-            'charset' => 'utf8',
-            'persist' => true,
+        $container = new Container();
+        $container->singleton(TypeParser::class);
+        $container->singleton(ConnectionManager::class);
+        $container->singleton(Config::class);
+        $container->singleton(Session::class);
+        $container->use(Config::class)->set('Database', [
+            'default' => [
+                'className' => PostgresConnection::class,
+                'host' => getenv('POSTGRES_HOST'),
+                'username' => getenv('POSTGRES_USERNAME'),
+                'password' => getenv('POSTGRES_PASSWORD'),
+                'database' => getenv('POSTGRES_DATABASE'),
+                'port' => getenv('POSTGRES_PORT'),
+                'charset' => 'utf8',
+                'persist' => true,
+            ],
+        ]);
+        $container->use(Config::class)->set('Session', [
+            'handler' => [
+                'className' => PostgresSessionHandler::class,
+            ],
         ]);
 
-        $connection = ConnectionManager::use();
+        $this->db = $container->use(ConnectionManager::class)->use();
 
-        $connection->query('DROP TABLE IF EXISTS sessions');
+        $this->db->query('DROP TABLE IF EXISTS sessions');
 
-        $connection->query(<<<'EOT'
+        $this->db->query(<<<'EOT'
             CREATE TABLE sessions (
                 id VARCHAR(40) NOT NULL,
                 data BYTEA NULL DEFAULT NULL,
@@ -118,17 +136,11 @@ final class PostgresTest extends TestCase
                 PRIMARY KEY (id)
             )
         EOT);
-    }
 
-    public static function tearDownAfterClass(): void
-    {
-        $connection = ConnectionManager::use();
-        $connection->query('DROP TABLE IF EXISTS sessions');
-    }
+        $this->session = $container->use(Session::class);
+        $this->handler = $this->session->getHandler();
 
-    protected function setUp(): void
-    {
-        $this->handler = new PostgresSessionHandler();
+        $this->session->start();
 
         $this->assertTrue(
             $this->handler->open('sessions', '')
@@ -137,7 +149,7 @@ final class PostgresTest extends TestCase
 
     protected function tearDown(): void
     {
-        $id = Session::id();
+        $id = $this->session->id();
 
         $this->assertTrue(
             $this->handler->destroy($id)
@@ -146,5 +158,7 @@ final class PostgresTest extends TestCase
         $this->assertTrue(
             $this->handler->close()
         );
+
+        $this->db->query('DROP TABLE IF EXISTS sessions');
     }
 }

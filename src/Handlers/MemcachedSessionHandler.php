@@ -57,10 +57,6 @@ class MemcachedSessionHandler extends SessionHandler
             return false;
         }
 
-        if (!$this->destroyCookie()) {
-            return false;
-        }
-
         return $this->releaseLock();
     }
 

@@ -5,15 +5,7 @@ namespace Fyre\Session;
 
 use SessionHandlerInterface;
 
-use function array_key_exists;
 use function array_replace_recursive;
-use function headers_sent;
-use function ini_get;
-use function session_get_cookie_params;
-use function session_name;
-use function setcookie;
-use function strtolower;
-use function time;
 
 /**
  * SessionHandler
@@ -21,51 +13,27 @@ use function time;
 abstract class SessionHandler implements SessionHandlerInterface
 {
     protected static array $defaults = [
-        'cookieName' => 'FyreSession',
-        'cookieLifetime' => 0,
-        'cookieDomain' => '',
-        'cookiePath' => '/',
-        'cookieSecure' => true,
-        'cookieSameSite' => 'Lax',
-        'expires' => null,
-        'path' => 'sessions',
-        'refresh' => 300,
-        'cleanup' => false,
         'prefix' => '',
+        'expires' => 3600,
     ];
 
     protected array $config = [];
+
+    protected Session $session;
 
     protected string|null $sessionId = null;
 
     /**
      * New SessionHandler constructor.
      *
+     * @param Session $session The Session.
      * @param array $options Options for the handler.
      */
-    public function __construct(array $options = [])
+    public function __construct(Session $session, array $options = [])
     {
-        $options['expires'] ??= (int) ini_get('session.gc_maxlifetime');
+        $this->session = $session;
 
         $this->config = array_replace_recursive(self::$defaults, static::$defaults, $options);
-    }
-
-    /**
-     * Check session refresh.
-     */
-    public function checkRefresh(): void
-    {
-        if (array_key_exists('HTTP_X_REQUESTED_WITH', $_SERVER) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-            return;
-        }
-
-        $now = time();
-
-        if (!array_key_exists('_refreshed', $_SESSION)) {
-            $_SESSION['_refreshed'] = $now;
-        } else if ($_SESSION['_refreshed'] < $now - $this->config['refresh']) {
-            Session::refresh($this->config['cleanup']);
-        }
     }
 
     /**
@@ -89,16 +57,6 @@ abstract class SessionHandler implements SessionHandlerInterface
      * @return false|int The number of sessions removed.
      */
     abstract public function gc(int $expires): false|int;
-
-    /**
-     * Get the session handler options.
-     *
-     * @return array The session handler options.
-     */
-    public function getConfig(): array
-    {
-        return $this->config;
-    }
 
     /**
      * Open the session.
@@ -139,33 +97,6 @@ abstract class SessionHandler implements SessionHandlerInterface
         }
 
         return $this->releaseLock() && $this->getLock($sessionId);
-    }
-
-    /**
-     * Destroy the session cookie.
-     *
-     * @param bool TRUE if the cookie was set, otherwise FALSE.
-     */
-    protected function destroyCookie(): bool
-    {
-        if (headers_sent()) {
-            return true;
-        }
-
-        $params = session_get_cookie_params();
-
-        return setcookie(
-            session_name(),
-            '',
-            [
-                'expires' => 0,
-                'path' => $params['path'],
-                'domain' => $params['domain'],
-                'secure' => $params['secure'],
-                'httponly' => $params['httponly'],
-                'samesite' => $params['samesite'],
-            ]
-        );
     }
 
     /**

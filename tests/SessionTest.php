@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace Tests;
 
+use Closure;
+use Fyre\Config\Config;
+use Fyre\Container\Container;
 use Fyre\Session\Session;
 use PHPUnit\Framework\TestCase;
 
@@ -10,97 +13,111 @@ use function sleep;
 
 final class SessionTest extends TestCase
 {
+    protected Session $session;
+
     public function testConsume(): void
     {
-        Session::set('test', 'value');
+        $this->session->set('test', 'value');
 
         $this->assertSame(
             'value',
-            Session::consume('test')
+            $this->session->consume('test')
         );
 
         $this->assertFalse(
-            Session::has('test')
+            $this->session->has('test')
         );
     }
 
     public function testGet(): void
     {
-        Session::set('test', 'value');
+        $this->session->set('test', 'value');
 
         $this->assertSame(
             'value',
-            Session::get('test')
+            $this->session->get('test')
         );
     }
 
     public function testHas(): void
     {
-        Session::set('test', 'value');
+        $this->session->set('test', 'value');
 
         $this->assertTrue(
-            Session::has('test')
+            $this->session->has('test')
         );
     }
 
     public function testId(): void
     {
-        $this->assertMatchesRegularExpression(
-            '/[a-z0-9]{26}/',
-            Session::id()
+        $this->assertSame(
+            'cli',
+            $this->session->id()
         );
     }
 
     public function testIsActive(): void
     {
-        $this->assertTrue(
-            Session::isActive()
+        $this->assertFalse(
+            $this->session->isActive()
         );
     }
 
     public function testSetFlash(): void
     {
-        Session::setFlash('test', 'value');
+        $this->session->setFlash('test', 'value');
 
         $this->assertTrue(
-            Session::has('test')
+            $this->session->has('test')
         );
 
-        Session::rotateFlashData();
-        Session::clearFlashData();
+        Closure::bind(function(): void {
+            $this->rotateFlashData();
+            $this->clearTempData();
+        }, $this->session, $this->session)();
 
         $this->assertFalse(
-            Session::has('test')
+            $this->session->has('test')
         );
     }
 
     public function testSetTemp(): void
     {
-        Session::setTemp('test', 'value', 2);
+        $this->session->setTemp('test', 'value', 2);
 
         $this->assertTrue(
-            Session::has('test')
+            $this->session->has('test')
         );
 
         sleep(1);
 
-        Session::clearTempData();
+        Closure::bind(function(): void {
+            $this->clearTempData();
+        }, $this->session, $this->session)();
 
         $this->assertTrue(
-            Session::has('test')
+            $this->session->has('test')
         );
 
         sleep(1);
 
-        Session::clearTempData();
+        Closure::bind(function(): void {
+            $this->clearTempData();
+        }, $this->session, $this->session)();
 
         $this->assertFalse(
-            Session::has('test')
+            $this->session->has('test')
         );
     }
 
-    public static function setUpBeforeClass(): void
+    protected function setUp(): void
     {
-        Session::clear();
+        $container = new Container();
+        $container->singleton(Config::class);
+        $container->singleton(Session::class);
+
+        $this->session = $container->use(Session::class);
+
+        $this->session->start();
     }
 }

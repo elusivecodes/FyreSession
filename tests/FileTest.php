@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Tests;
 
+use Fyre\Config\Config;
+use Fyre\Container\Container;
 use Fyre\FileSystem\Folder;
 use Fyre\Session\Handlers\FileSessionHandler;
 use Fyre\Session\Session;
@@ -12,9 +14,11 @@ final class FileTest extends TestCase
 {
     protected FileSessionHandler $handler;
 
+    protected Session $session;
+
     public function testGc(): void
     {
-        $id = Session::id();
+        $id = $this->session->id();
 
         $this->assertSame(
             '',
@@ -39,7 +43,7 @@ final class FileTest extends TestCase
 
     public function testRead(): void
     {
-        $id = Session::id();
+        $id = $this->session->id();
 
         $this->assertSame(
             '',
@@ -58,7 +62,7 @@ final class FileTest extends TestCase
 
     public function testUpdate(): void
     {
-        $id = Session::id();
+        $id = $this->session->id();
 
         $this->assertSame(
             '',
@@ -91,7 +95,19 @@ final class FileTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->handler = new FileSessionHandler();
+        $container = new Container();
+        $container->singleton(Config::class);
+        $container->singleton(Session::class);
+        $container->use(Config::class)->set('Session', [
+            'handler' => [
+                'className' => FileSessionHandler::class,
+            ],
+        ]);
+
+        $this->session = $container->use(Session::class);
+        $this->handler = $this->session->getHandler();
+
+        $this->session->start();
 
         $this->assertTrue(
             $this->handler->open('sessions', '')
@@ -100,7 +116,7 @@ final class FileTest extends TestCase
 
     protected function tearDown(): void
     {
-        $id = Session::id();
+        $id = $this->session->id();
 
         $this->assertTrue(
             $this->handler->destroy($id)

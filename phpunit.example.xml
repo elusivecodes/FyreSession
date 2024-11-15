@@ -1,4 +1,4 @@
-<phpunit bootstrap="tests/bootstrap.php">
+<phpunit>
     <php>
         <env name="MYSQL_HOST" value="127.0.0.1" force="true" />
         <env name="MYSQL_USERNAME" value="root" force="true" />

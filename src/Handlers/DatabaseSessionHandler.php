@@ -8,6 +8,7 @@ use Fyre\DB\Connection;
 use Fyre\DB\ConnectionManager;
 use Fyre\Schema\SchemaRegistry;
 use Fyre\Schema\TableSchema;
+use Fyre\Session\Session;
 use Fyre\Session\SessionHandler;
 
 /**
@@ -19,13 +20,33 @@ class DatabaseSessionHandler extends SessionHandler
         'connectionKey' => 'default',
     ];
 
+    protected ConnectionManager $connectionManager;
+
     protected Connection $db;
 
     protected TableSchema $schema;
 
+    protected SchemaRegistry $schemaRegistry;
+
     protected bool $sessionExists = false;
 
     protected string $table;
+
+    /**
+     * New DatabaseSessionHandler constructor.
+     *
+     * @param Session $session The Session.
+     * @param ConnectionManager $connectionManager The ConnectionManager.
+     * @param SchemaRegistry $schemaRegistry The SchemaRegistry.
+     * @param array $options Options for the handler.
+     */
+    public function __construct(Session $session, ConnectionManager $connectionManager, SchemaRegistry $schemaRegistry, array $options = [])
+    {
+        parent::__construct($session, $options);
+
+        $this->connectionManager = $connectionManager;
+        $this->schemaRegistry = $schemaRegistry;
+    }
 
     /**
      * Close the session.
@@ -48,16 +69,12 @@ class DatabaseSessionHandler extends SessionHandler
             return false;
         }
 
-        $result = $this->db->delete()
+        $this->db->delete()
             ->from($this->table)
             ->where([
                 'id' => $sessionId,
             ])
             ->execute();
-
-        if (!$this->destroyCookie()) {
-            return false;
-        }
 
         return $this->releaseLock();
     }
@@ -97,12 +114,11 @@ class DatabaseSessionHandler extends SessionHandler
      */
     public function open(string $path, string $name): bool
     {
-        $this->db = ConnectionManager::use($this->config['connectionKey']);
+        $this->db = $this->connectionManager->use($this->config['connectionKey']);
 
         $this->table = $path;
 
-        $this->schema = SchemaRegistry::getSchema($this->db)
-            ->describe($this->table);
+        $this->schema = $this->schemaRegistry->use($this->db)->describe($this->table);
 
         return true;
     }

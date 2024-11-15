@@ -44,10 +44,6 @@ class FileSessionHandler extends SessionHandler
 
         $this->file->delete();
 
-        if (!$this->destroyCookie()) {
-            return false;
-        }
-
         return true;
     }
 
