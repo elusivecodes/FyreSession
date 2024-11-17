@@ -125,7 +125,7 @@ $value = $session->get($key);
 
 **Has**
 
-Determine if a value exists in the session.
+Determine whether a value exists in the session.
 
 - `$key` is a string representing the session key.
 
@@ -143,7 +143,7 @@ $id = $session->id();
 
 **Is Active**
 
-Determine if the session is active.
+Determine whether the session is active.
 
 ```php
 $isActive = $session->isActive();

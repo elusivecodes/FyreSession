@@ -167,7 +167,7 @@ class Session
     }
 
     /**
-     * Determine if a value exists in the session.
+     * Determine whether a value exists in the session.
      *
      * @param string $key The session key.
      * @return bool TRUE if the item exists, otherwise FALSE.
@@ -188,7 +188,7 @@ class Session
     }
 
     /**
-     * Determine if the session is active.
+     * Determine whether the session is active.
      *
      * @return bool TRUE if the session is active, otherwise FALSE.
      */
