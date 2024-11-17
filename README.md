@@ -35,7 +35,7 @@ use Fyre\Session\Session;
 ## Basic Usage
 
 - `$container` is a [*Container*](https://github.com/elusivecodes/FyreContainer).
-- `$config` is a  [*Config*](https://github.com/elusivecodes/FyreConfig).
+- `$config` is a [*Config*](https://github.com/elusivecodes/FyreConfig).
 
 ```php
 $session = new Session($container, $config);

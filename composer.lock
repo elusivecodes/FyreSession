@@ -50,16 +50,16 @@
         },
         {
             "name": "fyre/cache",
-            "version": "v5.0.1",
+            "version": "v5.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/elusivecodes/FyreCache.git",
-                "reference": "66855e51b6db82042160ecf16343a0415249cd34"
+                "reference": "24feac1c74f2c44429137e967b436124710680b0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elusivecodes/FyreCache/zipball/66855e51b6db82042160ecf16343a0415249cd34",
-                "reference": "66855e51b6db82042160ecf16343a0415249cd34",
+                "url": "https://api.github.com/repos/elusivecodes/FyreCache/zipball/24feac1c74f2c44429137e967b436124710680b0",
+                "reference": "24feac1c74f2c44429137e967b436124710680b0",
                 "shasum": ""
             },
             "require": {
@@ -92,22 +92,22 @@
             "description": "A cache library.",
             "support": {
                 "issues": "https://github.com/elusivecodes/FyreCache/issues",
-                "source": "https://github.com/elusivecodes/FyreCache/tree/v5.0.1"
+                "source": "https://github.com/elusivecodes/FyreCache/tree/v5.1.0"
             },
-            "time": "2024-11-02T04:20:52+00:00"
+            "time": "2024-11-17T00:46:24+00:00"
         },
         {
             "name": "fyre/config",
-            "version": "v4.0.1",
+            "version": "v4.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/elusivecodes/FyreConfig.git",
-                "reference": "d9c5d60c786ef65996121562496b0886058d13b4"
+                "reference": "12653b47c5a7181840ece99c8a8d986dd5efad86"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elusivecodes/FyreConfig/zipball/d9c5d60c786ef65996121562496b0886058d13b4",
-                "reference": "d9c5d60c786ef65996121562496b0886058d13b4",
+                "url": "https://api.github.com/repos/elusivecodes/FyreConfig/zipball/12653b47c5a7181840ece99c8a8d986dd5efad86",
+                "reference": "12653b47c5a7181840ece99c8a8d986dd5efad86",
                 "shasum": ""
             },
             "require": {
@@ -138,9 +138,9 @@
             "description": "A configuration library.",
             "support": {
                 "issues": "https://github.com/elusivecodes/FyreConfig/issues",
-                "source": "https://github.com/elusivecodes/FyreConfig/tree/v4.0.1"
+                "source": "https://github.com/elusivecodes/FyreConfig/tree/v4.1.0"
             },
-            "time": "2024-10-30T11:51:58+00:00"
+            "time": "2024-11-15T10:10:09+00:00"
         },
         {
             "name": "fyre/container",
@@ -228,16 +228,16 @@
         },
         {
             "name": "fyre/db",
-            "version": "v6.0.1",
+            "version": "v6.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/elusivecodes/FyreDB.git",
-                "reference": "b252aabbb70576b5699057212ce2942e1b7f065d"
+                "reference": "00e078d15752481e4ca80d4da57ebf6afeee62a8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elusivecodes/FyreDB/zipball/b252aabbb70576b5699057212ce2942e1b7f065d",
-                "reference": "b252aabbb70576b5699057212ce2942e1b7f065d",
+                "url": "https://api.github.com/repos/elusivecodes/FyreDB/zipball/00e078d15752481e4ca80d4da57ebf6afeee62a8",
+                "reference": "00e078d15752481e4ca80d4da57ebf6afeee62a8",
                 "shasum": ""
             },
             "require": {
@@ -270,9 +270,9 @@
             "description": "A database library.",
             "support": {
                 "issues": "https://github.com/elusivecodes/FyreDB/issues",
-                "source": "https://github.com/elusivecodes/FyreDB/tree/v6.0.1"
+                "source": "https://github.com/elusivecodes/FyreDB/tree/v6.0.2"
             },
-            "time": "2024-11-08T12:32:59+00:00"
+            "time": "2024-11-15T10:34:44+00:00"
         },
         {
             "name": "fyre/filesystem",
