@@ -212,7 +212,14 @@ class Session
         setcookie(
             session_name(),
             '',
-            $params + ['expires' => 1]
+            [
+                'expires' => 1,
+                'path' => $params['path'],
+                'domain' => $params['domain'],
+                'secure' => $params['secure'],
+                'httponly' => $params['httponly'],
+                'samesite' => $params['samesite'],
+            ],
         );
 
         session_regenerate_id($deleteOldSession);
