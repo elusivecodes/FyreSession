@@ -83,13 +83,9 @@ class Session
         ini_set('session.cookie_secure', $this->config['cookie']['secure']);
         ini_set('session.cookie_samesite', $this->config['cookie']['sameSite']);
         ini_set('session.cookie_httponly', 1);
-        ini_set('session.use_trans_sid', 0);
         ini_set('session.use_strict_mode', 1);
         ini_set('session.use_cookies', 1);
-        ini_set('session.use_only_cookies', 1);
         ini_set('session.lazy_write', 1);
-        ini_set('session.sid_length ', 48);
-        ini_set('session.sid_bits_per_character', 6);
 
         $this->handler = $container->build($options['className'], ['session' => $this, 'options' => $options]);
 
