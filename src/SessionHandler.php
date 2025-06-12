@@ -19,8 +19,6 @@ abstract class SessionHandler implements SessionHandlerInterface
 
     protected array $config = [];
 
-    protected Session $session;
-
     protected string|null $sessionId = null;
 
     /**
@@ -29,10 +27,10 @@ abstract class SessionHandler implements SessionHandlerInterface
      * @param Session $session The Session.
      * @param array $options Options for the handler.
      */
-    public function __construct(Session $session, array $options = [])
-    {
-        $this->session = $session;
-
+    public function __construct(
+        protected Session $session,
+        array $options = []
+    ) {
         $this->config = array_replace_recursive(self::$defaults, static::$defaults, $options);
     }
 

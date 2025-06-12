@@ -20,13 +20,9 @@ class DatabaseSessionHandler extends SessionHandler
         'connectionKey' => 'default',
     ];
 
-    protected ConnectionManager $connectionManager;
-
     protected Connection $db;
 
     protected TableSchema $schema;
-
-    protected SchemaRegistry $schemaRegistry;
 
     protected bool $sessionExists = false;
 
@@ -40,12 +36,13 @@ class DatabaseSessionHandler extends SessionHandler
      * @param SchemaRegistry $schemaRegistry The SchemaRegistry.
      * @param array $options Options for the handler.
      */
-    public function __construct(Session $session, ConnectionManager $connectionManager, SchemaRegistry $schemaRegistry, array $options = [])
-    {
+    public function __construct(
+        Session $session,
+        protected ConnectionManager $connectionManager,
+        protected SchemaRegistry $schemaRegistry,
+        array $options = []
+    ) {
         parent::__construct($session, $options);
-
-        $this->connectionManager = $connectionManager;
-        $this->schemaRegistry = $schemaRegistry;
     }
 
     /**
